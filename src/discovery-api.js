@@ -1,16 +1,7 @@
-function createConnectorCallInit(host, jwtToken) {
-    return {
-        host: host,
-        path: "/services/cicd-connector/v2/deployment",
-        method: "POST",
-        protocol: "https:",
-        headers: {
-            Authorization: `Bearer ` + jwtToken,
-        },
-    };
-}
+// const formData = new FormData();
 
-function registerService(host, bearerToken, {id, sbomFile, sourceType, sourceInstance, name, description,}) {
+
+function registerService(axios, {id, sbomFile, sourceType, sourceInstance, name, description,}) {
     console.log(`Registering service and SBOM with following details. id: ${id}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`)
 
     return Promise.resolve()

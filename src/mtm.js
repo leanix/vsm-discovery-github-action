@@ -1,48 +1,29 @@
-const base64 = require("base-64");
-const fetch = require("node-fetch");
+const axios = require('axios').default;
 
-function createAPIAccessTokenRequestInit(secret) {
-    const headers = new fetch.Headers();
-    headers.append(
-        "Authorization",
-        "Basic " + base64.encode("apitoken:" + secret)
-    );
-    headers.append("Content-Type", "application/x-www-form-urlencoded");
-    return {
-        method: "post",
-        auth: {
-            user: "apitoken",
-            password: secret,
-        },
-        body: "grant_type=client_credentials",
-        headers: headers,
-        json: true,
-    };
-}
-
-function authenticate(token, host) {
-    return fetch(
-        "https://" + host + "/services/mtm/v1/oauth2/token",
-        createAPIAccessTokenRequestInit(token)
-    )
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(
-                    "Http-response was not ok - http status response: " +
-                    response.status +
-                    " " +
-                    response.statusText
-                );
+async function authenticate(host, token) {
+    const encodedToken = Buffer.from(`apitoken:${token}`).toString('base64');
+    const data = new URLSearchParams({ grant_type: 'client_credentials' }).toString();
+    try {
+        const res = await axios.post(`https://${host}/services/mtm/v1/oauth2/token`, data, {
+            headers: {
+                Authorization: `Basic ${encodedToken}`,
+                'content-type': 'application/x-www-form-urlencoded'
             }
-            return response.json();
-        })
-        .then((json) => {
-            return json.access_token;
-        })
-        .catch((reason) => {
-            console.error("Couldn't get API-Token!");
-            throw new Error(reason);
         });
+
+        console.info(`Successfully generated JWT token.`);
+
+        return axios.create({
+            baseURL: `https://eu-vsm.leanix.net/services/vsm/discovery/v1`,
+            headers: {
+                Authorization: `Bearer ${res.data.access_token}`
+            }
+        });
+    } catch (e) {
+        console.error('Failed to authenticate using provided technical user token.. terminating');
+        throw new Error('Failed to authenticate using system token.. terminating');
+    }
 }
+
 
 module.exports = {authenticate}
