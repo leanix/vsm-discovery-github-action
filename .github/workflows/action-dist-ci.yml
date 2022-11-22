@@ -25,18 +25,15 @@ jobs:
 
       - name: Read .node-version
         id: nodejs
-        if: steps.filter.outputs.DIFF == 'true'
         run: echo ::set-output name=version::$(cat .node-version)
 
       - name: Setup node
         uses: actions/setup-node@v2
-        if: steps.filter.outputs.DIFF == 'true'
         with:
           node-version: ${{ steps.nodejs.outputs.version }}
 
       - name: Cache node modules
         uses: actions/cache@v2
-        if: steps.filter.outputs.DIFF == 'true'
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -51,11 +48,9 @@ jobs:
 #        run: npm run check-style
 
       - name: Generate dist files
-        if: steps.filter.outputs.DIFF == 'true'
         run: npm run build
 
       - name: Commit & Push dist folder
-        if: steps.filter.outputs.DIFF == 'true'
         run: |
           if expr $(git status --porcelain | grep dist | wc -l) \> 0; then
             git config user.name leanix-ci
