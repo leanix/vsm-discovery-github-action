@@ -24,7 +24,6 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Read .node-version
-        working-directory: k8s
         id: nodejs
         if: steps.filter.outputs.DIFF == 'true'
         run: echo ::set-output name=version::$(cat .node-version)
@@ -44,17 +43,14 @@ jobs:
           restore-keys: ${{ runner.os }}-node-
 
       - name: Install npm modules
-        working-directory: k8s
         if: steps.filter.outputs.DIFF == 'true'
         run: npm ci
 
-      - name: Check Code Style
-        working-directory: k8s
-        if: steps.filter.outputs.DIFF == 'true'
-        run: npm run check-style
+#      - name: Check Code Style
+#        if: steps.filter.outputs.DIFF == 'true'
+#        run: npm run check-style
 
       - name: Generate dist files
-        working-directory: k8s
         if: steps.filter.outputs.DIFF == 'true'
         run: npm run build
 
