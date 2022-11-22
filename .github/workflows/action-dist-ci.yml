@@ -46,10 +46,6 @@ jobs:
         if: steps.filter.outputs.DIFF == 'true'
         run: npm ci
 
-#      - name: Check Code Style
-#        if: steps.filter.outputs.DIFF == 'true'
-#        run: npm run check-style
-
       - name: Generate dist files
         run: npm run build
 
