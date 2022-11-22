@@ -4,19 +4,10 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /***/ 301:
 /***/ ((module) => {
 
-function createConnectorCallInit(host, jwtToken) {
-    return {
-        host: host,
-        path: "/services/cicd-connector/v2/deployment",
-        method: "POST",
-        protocol: "https:",
-        headers: {
-            Authorization: `Bearer ` + jwtToken,
-        },
-    };
-}
+// const formData = new FormData();
 
-function registerService(host, bearerToken, {id, sbomFile, sourceType, sourceInstance, name, description,}) {
+
+function registerService(axios, {id, sbomFile, sourceType, sourceInstance, name, description,}) {
     console.log(`Registering service and SBOM with following details. id: ${id}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`)
 
     return Promise.resolve()
@@ -64,52 +55,33 @@ module.exports = {registerService}
 /***/ 225:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const base64 = __nccwpck_require__(881);
-const fetch = __nccwpck_require__(47);
+const axios = (__nccwpck_require__(141)["default"]);
 
-function createAPIAccessTokenRequestInit(secret) {
-    const headers = new fetch.Headers();
-    headers.append(
-        "Authorization",
-        "Basic " + base64.encode("apitoken:" + secret)
-    );
-    headers.append("Content-Type", "application/x-www-form-urlencoded");
-    return {
-        method: "post",
-        auth: {
-            user: "apitoken",
-            password: secret,
-        },
-        body: "grant_type=client_credentials",
-        headers: headers,
-        json: true,
-    };
-}
-
-function authenticate(token, host) {
-    return fetch(
-        "https://" + host + "/services/mtm/v1/oauth2/token",
-        createAPIAccessTokenRequestInit(token)
-    )
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(
-                    "Http-response was not ok - http status response: " +
-                    response.status +
-                    " " +
-                    response.statusText
-                );
+async function authenticate(host, token) {
+    const encodedToken = Buffer.from(`apitoken:${token}`).toString('base64');
+    const data = new URLSearchParams({ grant_type: 'client_credentials' }).toString();
+    try {
+        const res = await axios.post(`https://${host}/services/mtm/v1/oauth2/token`, data, {
+            headers: {
+                Authorization: `Basic ${encodedToken}`,
+                'content-type': 'application/x-www-form-urlencoded'
             }
-            return response.json();
-        })
-        .then((json) => {
-            return json.access_token;
-        })
-        .catch((reason) => {
-            console.error("Couldn't get API-Token!");
-            throw new Error(reason);
         });
+
+        console.info(`Successfully generated JWT token.`);
+
+        return axios.create({
+            baseURL: `https://eu-vsm.leanix.net/services/vsm/discovery/v1`,
+            headers: {
+                Authorization: `Bearer ${res.data.access_token}`
+            }
+        });
+    } catch (e) {
+        console.error('Failed to authenticate using provided technical user token.. terminating');
+        throw new Error('Failed to authenticate using system token.. terminating');
+    }
 }
+
 
 module.exports = {authenticate}
 
@@ -131,18 +103,10 @@ module.exports = eval("require")("@actions/github");
 
 /***/ }),
 
-/***/ 881:
+/***/ 141:
 /***/ ((module) => {
 
-module.exports = eval("require")("base-64");
-
-
-/***/ }),
-
-/***/ 47:
-/***/ ((module) => {
-
-module.exports = eval("require")("node-fetch");
+module.exports = eval("require")("axios");
 
 
 /***/ }),
