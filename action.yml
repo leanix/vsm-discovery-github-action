@@ -1,0 +1,20 @@
+name: "LeanIX VSM Discovery"
+description: "Integrate into your CI/CD pipeline to manage service and SBOM information automatically for your LeanIX VSM workspace"
+inputs:
+  host:
+    description: "The LeanIX host where the connector is located, e.g.: eu.leanix.net"
+    required: true
+    default: "eu"
+  api-token:
+    description: "technical user token for VSM workspace"
+    required: true
+  service-id:
+    description: "technical user token for VSM workspace"
+    required: true
+  sbom-path:
+    description: "The location of the SBOM file that is generated in CycloneDX specification. Accepted only JSON format. Read me about in the documentation for generating the SBOM file correctly"
+    required: false
+    default: "/bom.json"
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
