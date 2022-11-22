@@ -10,7 +10,7 @@ inputs:
     required: true
   service-id:
     description: "technical user token for VSM workspace"
-    required: true
+    required: false
   sbom-path:
     description: "The location of the SBOM file that is generated in CycloneDX specification. Accepted only JSON format. Read me about in the documentation for generating the SBOM file correctly"
     required: false
