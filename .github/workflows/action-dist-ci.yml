@@ -32,6 +32,9 @@ jobs:
         with:
           node-version: ${{ steps.nodejs.outputs.version }}
 
+      - name: Install ncc to generate dist
+        run: npm i -g @vercel/ncc
+
       - name: Cache node modules
         uses: actions/cache@v2
         with:
