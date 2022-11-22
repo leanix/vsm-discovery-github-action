@@ -1,0 +1,17 @@
+on:
+  push:
+    branches:
+      - test/CID-1136/test-github-action
+  workflow_dispatch:
+
+
+jobs:
+  vsm_discovery_action:
+    runs-on: ubuntu-latest
+    name: discover service A
+    steps:
+      - name: Hello world action step
+        id: hello
+        uses: leanix/vsm-discovery-github-action@main
+        with:
+          api-token: ${{ secrets.LXVSM_TECHNICAL_USER_TOKEN }}
