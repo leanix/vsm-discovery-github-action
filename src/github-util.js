@@ -1,15 +1,15 @@
 const github = require("@actions/github");
 
 function getGitHubRepoName() {
-    return github.event.repository.name
+    return github.context.repo.repo
 }
 
 function getGitHubRepoDescription() {
-    return github.event.repository.description
+    return github.context.repo.repo
 }
 
 function getGitHubOrgName() {
-    return github.event.repository.organization.name
+    return github.context.repo.owner
 }
 
 module.exports = {getGitHubOrgName, getGitHubRepoDescription, getGitHubRepoName}
