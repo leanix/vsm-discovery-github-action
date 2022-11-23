@@ -5,8 +5,7 @@ const {authenticate} = require("./mtm")
 const {registerService} = require("./discovery-api-client")
 const {getGitHubOrgName, getGitHubRepoDescription, getGitHubRepoName} = require("./github-util")
 
-
-
+// start
 const host = core.getInput('host');
 const token = core.getInput('api-token');
 const sbomFilePath = core.getInput('sbom-path');
@@ -42,10 +41,16 @@ function getSbomFile(sbomFilePath) {
 }
 
 function validateInputs(inputs) {
-    const {token} = inputs
+    const {token, data} = inputs
 
     if (!token) {
         throw new Error('Please add LXVSM_TECHNICAL_USER_TOKEN in your secrets. Generate the token from the VSM workspace under technical users tab.')
+    }
+
+    try {
+        JSON.parse(data)
+    } catch (_) {
+        throw new Error(`additional-data field is not valid json (formatted to string)`)
     }
 }
 
