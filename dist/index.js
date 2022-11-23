@@ -11783,21 +11783,50 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 238:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const FormData = __nccwpck_require__(5580);
+
+function registerService(axios, {id, sbomFile, sourceType, sourceInstance, name, description, data}) {
+    console.log(`Registering service and SBOM with following details. id: ${id}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`)
+
+    const formData = new FormData();
+    formData.append("id", id);
+    formData.append("sourceType", sourceType);
+    formData.append("sourceInstance", sourceInstance);
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("data", JSON.stringify(data));
+    if(sbomFile !== null) {
+        formData.append("bom", sbomFile);
+    }
+
+    return axios.post('/service', formData)
+}
+
+module.exports = {registerService}
+
+/***/ }),
+
 /***/ 7408:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const github = __nccwpck_require__(5337);
 
 function getGitHubRepoName() {
-    return github.context.repo.repo
+    // return github.context.repo.repo
+    return 'repo'
 }
 
 function getGitHubRepoDescription() {
-    return github.context.repo.repo
+    // return github.context.repo.repo
+    return 'repo'
 }
 
 function getGitHubOrgName() {
-    return github.context.repo.owner
+    // return github.context.repo.owner
+    return 'leanix'
 }
 
 module.exports = {getGitHubOrgName, getGitHubRepoDescription, getGitHubRepoName}
@@ -15805,13 +15834,33 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(6257);
 const fs = __nccwpck_require__(7147);
+
 const {authenticate} = __nccwpck_require__(6225)
+const {registerService} = __nccwpck_require__(238)
 const {getGitHubOrgName, getGitHubRepoDescription, getGitHubRepoName} = __nccwpck_require__(7408)
+
+
+
+const host = core.getInput('host');
+const token = core.getInput('api-token');
+const sbomFilePath = core.getInput('sbom-path');
+const data = core.getInput('additional-data');
+const serviceName = core.getInput('service-name');
+const sourceType = core.getInput('source-type');
+
+main({
+    host,
+    token,
+    sbomFilePath,
+    data,
+    serviceName,
+    sourceType
+}).then().catch(e => core.setFailed(`Failed to register service. Error: ${e.message}`))
 
 function getSbomFile(sbomFilePath) {
     console.log("Getting generated sbom file");
     if (!sbomFilePath || !fs.existsSync(sbomFilePath)) {
-        core.warning("Could not find dependency file");
+        core.warning("Could not find SBOM file. Follow the documentation in README.md to learn how to generate SBOM file.");
         return null;
     }
 
@@ -15829,62 +15878,20 @@ function getSbomFile(sbomFilePath) {
 function validateInputs(inputs) {
     const {token} = inputs
 
-    if(!token) {
+    if (!token) {
         throw new Error('Please add LXVSM_TECHNICAL_USER_TOKEN in your secrets. Generate the token from the VSM workspace under technical users tab.')
     }
 }
 
-function registerService(axios, {id, sbomFile, sourceType, sourceInstance, name, description,}) {
-    console.log(`Registering service and SBOM with following details. id: ${id}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`)
-
-    return Promise.resolve()
-    // const options = createConnectorCallInit(host, bearerToken);
-    // const formData = new FormData();
-    // formData.append("id", id);
-    // formData.append("sourceType", sourceType);
-    // formData.append("sourceInstance", sourceInstance);
-    // formData.append("name", name);
-    // formData.append("description", description);
-    // // formData.append("data", JSON.stringify(data));
-    // formData.append("bom", sbomFile);
-    //
-    // return new Promise((resolve, reject) => {
-    //     const req = formData.submit(options, (err, res) => {
-    //         if (err) {
-    //             console.error(`Http-response to discovery API was not ok. http status response: ${res.statusCode}. Error message: ${err.message}`);
-    //             return reject(new Error(err.message));
-    //         }
-    //         if (res.statusCode < 200 || res.statusCode > 299) {
-    //             return reject(new Error(`HTTP status code ${res.statusCode}`));
-    //         }
-    //         const body = [];
-    //         res.on("data", (chunk) => body.push(chunk));
-    //         res.on("end", () => {
-    //             const resString = Buffer.concat(body).toString();
-    //             resolve(resString);
-    //         });
-    //     });
-    // })
-    //     .then((result) => {
-    //         return result;
-    //     })
-    //     .catch((reason) => {
-    //         console.error("Couldn't access the API");
-    //         throw new Error(reason);
-    //     });
-}
-
-
 async function main(inputs) {
     validateInputs(inputs)
 
-    const {token, host, sbomFilePath,} = inputs
+    const {token, host, sbomFilePath, sourceType} = inputs
     const axios = await authenticate(host, token)
 
     // todo get from inputs over defauls
     const serviceName = getGitHubRepoName()
     const sourceInstance = getGitHubOrgName()
-    const sourceType = 'cicd'
     const defaults = {
         id: `${sourceType}-${sourceInstance}-${serviceName}`,
         sourceType,
@@ -15902,12 +15909,6 @@ async function main(inputs) {
         sbomFile: getSbomFile(sbomFilePath)
     })
 }
-
-const host = core.getInput('host');
-const token = core.getInput('api-token');
-const sbomFilePath = core.getInput('sbom-path');
-// const serviceName = core.getInput('sbom-path');
-main({host, token, sbomFilePath}).then().catch(e => core.setFailed(`Failed to register service. Error: ${e.message}`))
 })();
 
 module.exports = __webpack_exports__;
