@@ -11,6 +11,14 @@ inputs:
   service-name:
     description: "Name of the service. By default name of the repository is assumed."
     required: false
+  additional-data:
+    description: "A key-value object holding any additional metadata about the service you want to bring into VSM."
+    required: false
+    default: {}
+  source-type:
+    description: "The source system of the service e.g. CI/CD"
+    required: false
+    default: "cicd"
   sbom-path:
     description: "The location of the SBOM file that is generated in CycloneDX specification. Accepted only JSON format. Read me about in the documentation for generating the SBOM file correctly"
     required: false
