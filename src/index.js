@@ -34,12 +34,17 @@ function getGitHubOrgName() {
 }
 
 function validateInputs(inputs) {
+    const {token} = inputs
+
+    if(!token) {
+        throw new Error('Please add LXVSM_TECHNICAL_USER_TOKEN in your secrets. Generate the token from the VSM workspace under technical users tab.')
+    }
     // todo complete
 }
 
 async function authenticate(host, token) {
     const encodedToken = Buffer.from(`apitoken:${token}`).toString('base64');
-    const data = new URLSearchParams({ grant_type: 'client_credentials' }).toString();
+    const data = new URLSearchParams({grant_type: 'client_credentials'}).toString();
     try {
         const res = await axios.post(`https://${host}/services/mtm/v1/oauth2/token`, data, {
             headers: {
@@ -104,7 +109,9 @@ function registerService(axios, {id, sbomFile, sourceType, sourceInstance, name,
 
 
 async function main(inputs) {
-    const {token, host, sbomFilePath, } = inputs
+    validateInputs(inputs)
+
+    const {token, host, sbomFilePath,} = inputs
     const axios = await authenticate(token, host)
 
     // todo get from inputs over defauls
@@ -112,7 +119,11 @@ async function main(inputs) {
     const sourceInstance = getGitHubOrgName()
     const sourceType = 'cicd'
     const defaults = {
-        id: `${sourceType}-${sourceInstance}-${serviceName}`, sourceType, sourceInstance, name: serviceName, description: getGitHubRepoDescription()
+        id: `${sourceType}-${sourceInstance}-${serviceName}`,
+        sourceType,
+        sourceInstance,
+        name: serviceName,
+        description: getGitHubRepoDescription()
     }
     const withOverrideDefaults = {
         ...defaults,
@@ -132,4 +143,4 @@ const sbomFilePath = core.getInput('sbom-path');
 console.log('host', host)
 console.log('sbomFilePath', sbomFilePath)
 console.log('token', token)
-main({host, token, sbomFilePath}).then()
+main({host, token, sbomFilePath}).then().catch(e => core.error(`Failed to register service. Error: ${e.message}`))
