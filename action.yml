@@ -4,7 +4,7 @@ inputs:
   host:
     description: "The LeanIX host where the connector is located, e.g.: eu.leanix.net"
     required: true
-    default: "eu"
+    default: "eu.leanix.net"
   api-token:
     description: "technical user token for VSM workspace"
     required: true

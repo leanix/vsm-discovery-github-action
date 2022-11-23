@@ -1,7 +1,7 @@
 const core = require('@actions/core');
-const github = require('@actions/github');
 const fs = require("fs");
-const axios = require('axios');
+const {authenticate} = require("./mtm")
+const {getGitHubOrgName, getGitHubRepoDescription, getGitHubRepoName} = require("./github-util")
 
 function getSbomFile(sbomFilePath) {
     console.log("Getting generated sbom file");
@@ -21,49 +21,11 @@ function getSbomFile(sbomFilePath) {
     return fs.createReadStream(sbomFilePath);
 }
 
-function getGitHubRepoName() {
-    return github.event.repository.name
-}
-
-function getGitHubRepoDescription() {
-    return github.event.repository.description
-}
-
-function getGitHubOrgName() {
-    return github.event.repository.organization.name
-}
-
 function validateInputs(inputs) {
     const {token} = inputs
 
     if(!token) {
         throw new Error('Please add LXVSM_TECHNICAL_USER_TOKEN in your secrets. Generate the token from the VSM workspace under technical users tab.')
-    }
-    // todo complete
-}
-
-async function authenticate(host, token) {
-    const encodedToken = Buffer.from(`apitoken:${token}`).toString('base64');
-    const data = new URLSearchParams({grant_type: 'client_credentials'}).toString();
-    try {
-        const res = await axios.post(`https://${host}/services/mtm/v1/oauth2/token`, data, {
-            headers: {
-                Authorization: `Basic ${encodedToken}`,
-                'content-type': 'application/x-www-form-urlencoded'
-            }
-        });
-
-        console.info(`Successfully generated JWT token.`);
-
-        return axios.create({
-            baseURL: `https://eu-vsm.leanix.net/services/vsm/discovery/v1`,
-            headers: {
-                Authorization: `Bearer ${res.data.access_token}`
-            }
-        });
-    } catch (e) {
-        console.error(`Failed to authenticate using provided technical user token. Error: ${e.message}`);
-        throw new Error('Failed to authenticate using system token. Make sure correct token is passed');
     }
 }
 
@@ -140,7 +102,4 @@ const host = core.getInput('host');
 const token = core.getInput('api-token');
 const sbomFilePath = core.getInput('sbom-path');
 // const serviceName = core.getInput('sbom-path');
-console.log('host', host)
-console.log('sbomFilePath', sbomFilePath)
-console.log('token', token)
 main({host, token, sbomFilePath}).then().catch(e => core.setFailed(`Failed to register service. Error: ${e.message}`))
