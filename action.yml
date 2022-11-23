@@ -8,8 +8,8 @@ inputs:
   api-token:
     description: "technical user token for VSM workspace"
     required: true
-  service-id:
-    description: "technical user token for VSM workspace"
+  service-name:
+    description: "Name of the service. By default name of the repository is assumed."
     required: false
   sbom-path:
     description: "The location of the SBOM file that is generated in CycloneDX specification. Accepted only JSON format. Read me about in the documentation for generating the SBOM file correctly"

@@ -125,4 +125,11 @@ async function main(inputs) {
     })
 }
 
-main({host: core.getInput('host'), token: core.getInput('api-token')}).then()
+const host = core.getInput('host');
+const token = core.getInput('api-token');
+const sbomFilePath = core.getInput('sbom-path');
+// const serviceName = core.getInput('sbom-path');
+console.log('host', host)
+console.log('sbomFilePath', sbomFilePath)
+console.log('token', token)
+main({host, token, sbomFilePath}).then()
