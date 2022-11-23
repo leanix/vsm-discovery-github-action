@@ -11788,24 +11788,31 @@ function wrappy (fn, cb) {
 
 const FormData = __nccwpck_require__(5580);
 
-function registerService(axios, {id, sourceType, sourceInstance, name, description, data}, sbomFile) {
-    console.log(`Registering service and SBOM with following details. id: ${id}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`)
+function registerService(
+  axios,
+  { id, sourceType, sourceInstance, name, description, data },
+  sbomFile
+) {
+  console.log(
+    `Registering service and SBOM with following details. id: ${id}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`
+  );
 
-    const formData = new FormData();
-    formData.append("id", id);
-    formData.append("sourceType", sourceType);
-    formData.append("sourceInstance", sourceInstance);
-    formData.append("name", name);
-    formData.append("description", description);
-    formData.append("data", data);
-    if(sbomFile !== null) {
-        formData.append("bom", sbomFile);
-    }
+  const formData = new FormData();
+  formData.append("id", id);
+  formData.append("sourceType", sourceType);
+  formData.append("sourceInstance", sourceInstance);
+  formData.append("name", name);
+  formData.append("description", description);
+  formData.append("data", data);
+  if (sbomFile !== null) {
+    formData.append("bom", sbomFile);
+  }
 
-    return axios.post('/service', formData)
+  return axios.post("/service", formData);
 }
 
-module.exports = {registerService}
+module.exports = { registerService };
+
 
 /***/ }),
 
@@ -11815,14 +11822,15 @@ module.exports = {registerService}
 const github = __nccwpck_require__(5337);
 
 function getGitHubRepoName() {
-    return github.context.repo.repo
+  return github.context.repo.repo;
 }
 
 function getGitHubOrgName() {
-    return github.context.repo.owner
+  return github.context.repo.owner;
 }
 
-module.exports = {getGitHubOrgName, getGitHubRepoName}
+module.exports = { getGitHubOrgName, getGitHubRepoName };
+
 
 /***/ }),
 
@@ -11832,31 +11840,42 @@ module.exports = {getGitHubOrgName, getGitHubRepoName}
 const axios = __nccwpck_require__(2153);
 
 async function authenticate(host, token) {
-    const encodedToken = Buffer.from(`apitoken:${token}`).toString('base64');
-    const data = new URLSearchParams({grant_type: 'client_credentials'}).toString();
-    try {
-        const res = await axios.post(`https://${host}/services/mtm/v1/oauth2/token`, data, {
-            headers: {
-                Authorization: `Basic ${encodedToken}`,
-                'content-type': 'application/x-www-form-urlencoded'
-            }
-        });
+  const encodedToken = Buffer.from(`apitoken:${token}`).toString("base64");
+  const data = new URLSearchParams({
+    grant_type: "client_credentials",
+  }).toString();
+  try {
+    const res = await axios.post(
+      `https://${host}/services/mtm/v1/oauth2/token`,
+      data,
+      {
+        headers: {
+          Authorization: `Basic ${encodedToken}`,
+          "content-type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
 
-        console.info(`Successfully generated JWT token.`);
+    console.info(`Successfully generated JWT token.`);
 
-        return axios.create({
-            baseURL: `https://eu-vsm.leanix.net/services/vsm/discovery/v1`,
-            headers: {
-                Authorization: `Bearer ${res.data.access_token}`
-            }
-        });
-    } catch (e) {
-        console.error(`Failed to authenticate using provided technical user token. Error: ${e.message}`);
-        throw new Error('Failed to authenticate using system token. Make sure correct token is passed');
-    }
+    return axios.create({
+      baseURL: `https://eu-vsm.leanix.net/services/vsm/discovery/v1`,
+      headers: {
+        Authorization: `Bearer ${res.data.access_token}`,
+      },
+    });
+  } catch (e) {
+    console.error(
+      `Failed to authenticate using provided technical user token. Error: ${e.message}`
+    );
+    throw new Error(
+      "Failed to authenticate using system token. Make sure correct token is passed"
+    );
+  }
 }
 
-module.exports = {authenticate}
+module.exports = { authenticate };
+
 
 /***/ }),
 
@@ -15828,91 +15847,123 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(6257);
 const fs = __nccwpck_require__(7147);
 
-const {authenticate} = __nccwpck_require__(6225)
-const {registerService} = __nccwpck_require__(238)
-const {getGitHubOrgName, getGitHubRepoName} = __nccwpck_require__(7408)
+const { authenticate } = __nccwpck_require__(6225);
+const { registerService } = __nccwpck_require__(238);
+const { getGitHubOrgName, getGitHubRepoName } = __nccwpck_require__(7408);
 
 // start
-const dryRun = core.getInput('dry-run');
-const host = core.getInput('host');
-const token = core.getInput('api-token');
-const sbomFilePath = core.getInput('sbom-path');
-const data = core.getInput('additional-data');
-const name = core.getInput('service-name');
-const description = core.getInput('service-description');
-const sourceType = core.getInput('source-type');
-const sourceInstance = core.getInput('source-instance')
+const dryRun = core.getInput("dry-run");
+const host = core.getInput("host");
+const token = core.getInput("api-token");
+const sbomFilePath = core.getInput("sbom-path");
+const data = core.getInput("additional-data");
+const name = core.getInput("service-name");
+const description = core.getInput("service-description");
+const sourceType = core.getInput("source-type");
+const sourceInstance = core.getInput("source-instance");
 
 main(dryRun, {
-    host, token, sbomFilePath, data, name, description, sourceType, sourceInstance
-}).then().catch(e => core.setFailed(`Failed to register service. Error: ${e.message}`))
+  host,
+  token,
+  sbomFilePath,
+  data,
+  name,
+  description,
+  sourceType,
+  sourceInstance,
+})
+  .then()
+  .catch((e) =>
+    core.setFailed(`Failed to register service. Error: ${e.message}`)
+  );
 
 function getSbomFile(sbomFilePath) {
-    const _sbomFilePath = `.${sbomFilePath}`
-    try { // validate if the file is a valid sbom json file
-        let file = fs.readFileSync(_sbomFilePath, 'utf-8');
-        JSON.parse(file)
-    } catch (e) {
-        core.warning(`Invalid CycloneDX SBOM json file. Error: ${e.message}`);
-        return null;
-    }
+  const _sbomFilePath = `.${sbomFilePath}`;
+  try {
+    // validate if the file is a valid sbom json file
+    let file = fs.readFileSync(_sbomFilePath, "utf-8");
+    JSON.parse(file);
+  } catch (e) {
+    core.warning(`Invalid CycloneDX SBOM json file. Error: ${e.message}`);
+    return null;
+  }
 
-    return fs.createReadStream(_sbomFilePath);
+  return fs.createReadStream(_sbomFilePath);
 }
 
 function validateInputs(inputs) {
-    const {token, data} = inputs
+  const { token, data } = inputs;
 
-    if (!token) {
-        throw new Error('Please add LXVSM_TECHNICAL_USER_TOKEN in your secrets. Generate the token from the VSM workspace under technical users tab.')
-    }
+  if (!token) {
+    throw new Error(
+      "Please add LXVSM_TECHNICAL_USER_TOKEN in your secrets. Generate the token from the VSM workspace under technical users tab."
+    );
+  }
 
-    if (!sbomFilePath || !fs.existsSync(`.${sbomFilePath}`)) {
-        core.warning("Could not find SBOM file. Follow the documentation in README.md to learn how to generate SBOM file.");
-    }
+  if (!sbomFilePath || !fs.existsSync(`.${sbomFilePath}`)) {
+    core.warning(
+      "Could not find SBOM file. Follow the documentation in README.md to learn how to generate SBOM file."
+    );
+  }
 
-    if(data && typeof data === 'string') {
-        try {
-            JSON.parse(data)
-        } catch (_) {
-            throw new Error(`additional-data field is not valid json (formatted to string)`)
-        }
+  if (data && typeof data === "string") {
+    try {
+      JSON.parse(data);
+    } catch (_) {
+      throw new Error(
+        `additional-data field is not valid json (formatted to string)`
+      );
     }
+  }
 }
 
 async function main(dryRun, inputs) {
-    validateInputs(inputs)
+  validateInputs(inputs);
 
-    const {token, host, sbomFilePath, sourceType, data, name, sourceInstance, description} = inputs
-    const axios = await authenticate(host, token)
+  const {
+    token,
+    host,
+    sbomFilePath,
+    sourceType,
+    data,
+    name,
+    sourceInstance,
+    description,
+  } = inputs;
+  const axios = await authenticate(host, token);
 
-    const sbomFile = getSbomFile(sbomFilePath)
-    const serviceName = name || getGitHubRepoName()
-    const serviceDescription = description || getGitHubRepoName()
-    const _sourceInstance = sourceInstance || getGitHubOrgName()
-    const _data = data && typeof data === 'string' ? data : "{}"
+  const sbomFile = getSbomFile(sbomFilePath);
+  const serviceName = name || getGitHubRepoName();
+  const serviceDescription = description || getGitHubRepoName();
+  const _sourceInstance = sourceInstance || getGitHubOrgName();
+  const _data = data && typeof data === "string" ? data : "{}";
 
-    const id = `${sourceType}-${sourceInstance}-${serviceName}`
-    core.info(`Auto-generated service Id: ${id}`)
+  const id = `${sourceType}-${sourceInstance}-${serviceName}`;
+  core.info(`Auto-generated service Id: ${id}`);
 
-    const withOverrideDefaults = {
-        ...inputs,
-        id,
-        name: serviceName,
-        sourceInstance: _sourceInstance,
-        description: serviceDescription,
-        data: _data,
-    }
+  const withOverrideDefaults = {
+    ...inputs,
+    id,
+    name: serviceName,
+    sourceInstance: _sourceInstance,
+    description: serviceDescription,
+    data: _data,
+  };
 
-    if (dryRun) {
-        core.info("Valid!")
-        console.log(withOverrideDefaults)
-    } else {
-        await registerService(axios, {
-            ...withOverrideDefaults,
-        }, sbomFile)
-    }
+  if (dryRun) {
+    core.info("Valid!");
+    console.log(withOverrideDefaults);
+  } else {
+    await registerService(
+      axios,
+      {
+        ...withOverrideDefaults,
+      },
+      sbomFile
+    );
+  }
 }
+
 })();
 
 module.exports = __webpack_exports__;
