@@ -1,0 +1,31 @@
+name: NPM checks
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: Read .node-version
+        id: nodejs
+        run: echo ::set-output name=version::$(cat .node-version)
+
+      - name: Setup Node ${{ steps.nodejs.outputs.version }} Environment
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ steps.nodejs.outputs.version }}
+
+      - name: Install dev dependencies
+        run: |
+          npm ci
+
+      - name: Run Format Checking
+        run: |
+          cd ${{ matrix.connector_directories }}
+          npm run check-format
