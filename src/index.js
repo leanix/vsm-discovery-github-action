@@ -143,4 +143,4 @@ const sbomFilePath = core.getInput('sbom-path');
 console.log('host', host)
 console.log('sbomFilePath', sbomFilePath)
 console.log('token', token)
-main({host, token, sbomFilePath}).then().catch(e => core.error(`Failed to register service. Error: ${e.message}`))
+main({host, token, sbomFilePath}).then().catch(e => core.setFailed(`Failed to register service. Error: ${e.message}`))
