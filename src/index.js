@@ -13,6 +13,8 @@ const data = core.getInput('additional-data');
 const serviceName = core.getInput('service-name');
 const sourceType = core.getInput('source-type');
 
+console.log('additional data', data)
+
 main({
     host,
     token,
