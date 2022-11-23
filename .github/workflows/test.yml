@@ -17,4 +17,6 @@ jobs:
         id: hello
         uses: leanix/vsm-discovery-github-action@main
         with:
+          dry-run: true
+          service-name: test-new-service-name
           api-token: ${{ secrets.LXVSM_TECHNICAL_USER_TOKEN }}
