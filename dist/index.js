@@ -11797,7 +11797,7 @@ function registerService(axios, {id, sbomFile, sourceType, sourceInstance, name,
     formData.append("sourceInstance", sourceInstance);
     formData.append("name", name);
     formData.append("description", description);
-    formData.append("data", data);
+    formData.append("data", "{}");
     if(sbomFile !== null) {
         formData.append("bom", sbomFile);
     }
@@ -15883,13 +15883,13 @@ function validateInputs(inputs) {
         throw new Error('Please add LXVSM_TECHNICAL_USER_TOKEN in your secrets. Generate the token from the VSM workspace under technical users tab.')
     }
 
-    if(typeof data === 'string') {
-        try {
-            JSON.parse(data)
-        } catch (_) {
-            throw new Error(`additional-data field is not valid json (formatted to string)`)
-        }
-    }
+    // if(typeof data === 'string') {
+    //     try {
+    //         JSON.parse(data)
+    //     } catch (_) {
+    //         throw new Error(`additional-data field is not valid json (formatted to string)`)
+    //     }
+    // }
 }
 
 async function main(inputs) {
@@ -15898,6 +15898,7 @@ async function main(inputs) {
     const {token, host, sbomFilePath, sourceType, data} = inputs
     const axios = await authenticate(host, token)
 
+    const sbomFile = getSbomFile(sbomFilePath)
     const serviceName = getGitHubRepoName()
     const sourceInstance = getGitHubOrgName()
     const description = getGitHubRepoDescription()
@@ -15921,7 +15922,7 @@ async function main(inputs) {
 
     await registerService(axios, {
         ...withOverrideDefaults,
-        sbomFile: getSbomFile(sbomFilePath)
+        sbomFile
     })
 }
 })();
