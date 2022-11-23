@@ -9,7 +9,7 @@ function registerService(axios, {id, sbomFile, sourceType, sourceInstance, name,
     formData.append("sourceInstance", sourceInstance);
     formData.append("name", name);
     formData.append("description", description);
-    formData.append("data", data);
+    formData.append("data", "{}");
     if(sbomFile !== null) {
         formData.append("bom", sbomFile);
     }
