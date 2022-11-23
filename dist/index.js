@@ -11815,21 +11815,14 @@ module.exports = {registerService}
 const github = __nccwpck_require__(5337);
 
 function getGitHubRepoName() {
-    // return github.context.repo.repo
-    return 'repo'
-}
-
-function getGitHubRepoDescription() {
-    // return github.context.repo.repo
-    return 'repo'
+    return github.context.repo.repo
 }
 
 function getGitHubOrgName() {
-    // return github.context.repo.owner
-    return 'leanix'
+    return github.context.repo.owner
 }
 
-module.exports = {getGitHubOrgName, getGitHubRepoDescription, getGitHubRepoName}
+module.exports = {getGitHubOrgName, getGitHubRepoName}
 
 /***/ }),
 
@@ -15845,9 +15838,8 @@ const token = core.getInput('api-token');
 const sbomFilePath = core.getInput('sbom-path');
 const data = core.getInput('additional-data');
 const serviceName = core.getInput('service-name');
+const serviceDescription = core.getInput('service-description');
 const sourceType = core.getInput('source-type');
-
-console.log('additional data', data)
 
 main({
     host,
@@ -15855,11 +15847,11 @@ main({
     sbomFilePath,
     data,
     serviceName,
+    serviceDescription,
     sourceType
 }).then().catch(e => core.setFailed(`Failed to register service. Error: ${e.message}`))
 
 function getSbomFile(sbomFilePath) {
-    console.log("Getting generated sbom file");
     if (!sbomFilePath || !fs.existsSync(sbomFilePath)) {
         core.warning("Could not find SBOM file. Follow the documentation in README.md to learn how to generate SBOM file.");
         return null;
@@ -15901,7 +15893,6 @@ async function main(inputs) {
     const sbomFile = getSbomFile(sbomFilePath)
     const serviceName = getGitHubRepoName()
     const sourceInstance = getGitHubOrgName()
-    const description = getGitHubRepoDescription()
     const _data = data ? data : "{}"
 
     const id =`${sourceType}-${sourceInstance}-${serviceName}`
@@ -15912,7 +15903,6 @@ async function main(inputs) {
         sourceType,
         sourceInstance,
         name: serviceName,
-        description,
         data: _data
     }
     const withOverrideDefaults = {
