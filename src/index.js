@@ -54,6 +54,8 @@ function validateInputs(inputs) {
 }
 
 async function main(dryRun, inputs) {
+    validateInputs(inputs)
+
     const {token, host, sbomFilePath, sourceType, data, name, sourceInstance, description} = inputs
     const axios = await authenticate(host, token)
 
