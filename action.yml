@@ -14,7 +14,7 @@ inputs:
   additional-data:
     description: "A key-value object holding any additional metadata about the service you want to bring into VSM."
     required: false
-    default: {}
+    default: '\{\}'
   source-type:
     description: "The source system of the service e.g. CI/CD"
     required: false
