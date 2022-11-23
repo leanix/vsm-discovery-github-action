@@ -62,8 +62,8 @@ async function authenticate(host, token) {
             }
         });
     } catch (e) {
-        console.error('Failed to authenticate using provided technical user token.. terminating');
-        throw new Error('Failed to authenticate using system token.. terminating');
+        console.error(`Failed to authenticate using provided technical user token. Error: ${e.message}`);
+        throw new Error('Failed to authenticate using system token. Make sure correct token is passed');
     }
 }
 
