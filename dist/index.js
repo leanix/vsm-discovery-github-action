@@ -15840,9 +15840,10 @@ const data = core.getInput('additional-data');
 const name = core.getInput('service-name');
 const description = core.getInput('service-description');
 const sourceType = core.getInput('source-type');
+const sourceInstance = core.getInput('source-instance')
 
 main({
-    host, token, sbomFilePath, data, name, description, sourceType
+    host, token, sbomFilePath, data, name, description, sourceType, sourceInstance
 }).then().catch(e => core.setFailed(`Failed to register service. Error: ${e.message}`))
 
 function getSbomFile(sbomFilePath) {
@@ -15881,22 +15882,26 @@ function validateInputs(inputs) {
 async function main(inputs) {
     validateInputs(inputs)
 
-    const {token, host, sbomFilePath, sourceType, data, name,} = inputs
+    const {token, host, sbomFilePath, sourceType, data, name, sourceInstance, description} = inputs
     const axios = await authenticate(host, token)
 
     const sbomFile = getSbomFile(sbomFilePath)
-    const serviceName = name ? name : getGitHubRepoName()
-    const sourceInstance = getGitHubOrgName()
+    const serviceName = name || getGitHubRepoName()
+    const serviceDescription = description || getGitHubRepoName()
+    const _sourceInstance = sourceInstance || getGitHubOrgName()
     const _data = data && typeof data === 'string' ? data : "{}"
 
     const id = `${sourceType}-${sourceInstance}-${serviceName}`
     core.info(`Auto-generated service Id: ${id}`)
 
     const withOverrideDefaults = {
-        ...inputs, id, name: serviceName, data: _data,
+        ...inputs,
+        id,
+        name: serviceName,
+        sourceInstance: _sourceInstance,
+        description: serviceDescription,
+        data: _data,
     }
-
-    console.log(withOverrideDefaults)
 
     await registerService(axios, {
         ...withOverrideDefaults,
