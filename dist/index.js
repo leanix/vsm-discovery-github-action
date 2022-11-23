@@ -11788,7 +11788,7 @@ function wrappy (fn, cb) {
 
 const FormData = __nccwpck_require__(5580);
 
-function registerService(axios, {id, sbomFile, sourceType, sourceInstance, name, description, data}) {
+function registerService(axios, {id, sourceType, sourceInstance, name, description, data}, sbomFile) {
     console.log(`Registering service and SBOM with following details. id: ${id}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`)
 
     const formData = new FormData();
@@ -11797,7 +11797,7 @@ function registerService(axios, {id, sbomFile, sourceType, sourceInstance, name,
     formData.append("sourceInstance", sourceInstance);
     formData.append("name", name);
     formData.append("description", description);
-    formData.append("data", "{}");
+    formData.append("data", data);
     if(sbomFile !== null) {
         formData.append("bom", sbomFile);
     }
@@ -15842,13 +15842,7 @@ const description = core.getInput('service-description');
 const sourceType = core.getInput('source-type');
 
 main({
-    host,
-    token,
-    sbomFilePath,
-    data,
-    name,
-    description,
-    sourceType
+    host, token, sbomFilePath, data, name, description, sourceType
 }).then().catch(e => core.setFailed(`Failed to register service. Error: ${e.message}`))
 
 function getSbomFile(sbomFilePath) {
@@ -15887,33 +15881,26 @@ function validateInputs(inputs) {
 async function main(inputs) {
     validateInputs(inputs)
 
-    const {token, host, sbomFilePath, sourceType, data,} = inputs
+    const {token, host, sbomFilePath, sourceType, data, name,} = inputs
     const axios = await authenticate(host, token)
 
     const sbomFile = getSbomFile(sbomFilePath)
-    const defaultServiceName = getGitHubRepoName()
+    const serviceName = name ? name : getGitHubRepoName()
     const sourceInstance = getGitHubOrgName()
-    const _data = data ? data : "{}"
+    const _data = data && typeof data === 'string' ? data : "{}"
 
-    const id = `${sourceType}-${sourceInstance}-${defaultServiceName}`
+    const id = `${sourceType}-${sourceInstance}-${serviceName}`
     core.info(`Auto-generated service Id: ${id}`)
 
-    const defaults = {
-        id,
-        sourceType,
-        sourceInstance,
-        name: defaultServiceName,
-        data: _data
-    }
     const withOverrideDefaults = {
-        ...defaults,
-        ...inputs
+        ...inputs, id, name: serviceName, data: _data,
     }
+
+    console.log(withOverrideDefaults)
 
     await registerService(axios, {
         ...withOverrideDefaults,
-        sbomFile
-    })
+    }, sbomFile)
 }
 })();
 
