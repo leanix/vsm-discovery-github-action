@@ -11789,15 +11789,15 @@ function wrappy (fn, cb) {
 const github = __nccwpck_require__(5337);
 
 function getGitHubRepoName() {
-    return github.event.repository.name
+    return github.context.repo.repo
 }
 
 function getGitHubRepoDescription() {
-    return github.event.repository.description
+    return github.context.repo.repo
 }
 
 function getGitHubOrgName() {
-    return github.event.repository.organization.name
+    return github.context.repo.owner
 }
 
 module.exports = {getGitHubOrgName, getGitHubRepoDescription, getGitHubRepoName}
