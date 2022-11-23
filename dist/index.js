@@ -11797,7 +11797,7 @@ function registerService(axios, {id, sbomFile, sourceType, sourceInstance, name,
     formData.append("sourceInstance", sourceInstance);
     formData.append("name", name);
     formData.append("description", description);
-    formData.append("data", JSON.stringify(data));
+    formData.append("data", data);
     if(sbomFile !== null) {
         formData.append("bom", sbomFile);
     }
@@ -15839,8 +15839,7 @@ const {authenticate} = __nccwpck_require__(6225)
 const {registerService} = __nccwpck_require__(238)
 const {getGitHubOrgName, getGitHubRepoDescription, getGitHubRepoName} = __nccwpck_require__(7408)
 
-
-
+// start
 const host = core.getInput('host');
 const token = core.getInput('api-token');
 const sbomFilePath = core.getInput('sbom-path');
@@ -15876,10 +15875,16 @@ function getSbomFile(sbomFilePath) {
 }
 
 function validateInputs(inputs) {
-    const {token} = inputs
+    const {token, data} = inputs
 
     if (!token) {
         throw new Error('Please add LXVSM_TECHNICAL_USER_TOKEN in your secrets. Generate the token from the VSM workspace under technical users tab.')
+    }
+
+    try {
+        JSON.parse(data)
+    } catch (_) {
+        throw new Error(`additional-data field is not valid json (formatted to string)`)
     }
 }
 
