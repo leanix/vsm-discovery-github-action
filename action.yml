@@ -11,6 +11,10 @@ inputs:
   service-name:
     description: "Name of the service. By default name of the repository is assumed."
     required: false
+  service-description:
+    description: "The description of the service."
+    required: false
+    default: ""
   additional-data:
     description: "A key-value object holding any additional metadata about the service you want to bring into VSM."
     required: false
