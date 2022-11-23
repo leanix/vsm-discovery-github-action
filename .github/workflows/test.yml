@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     name: discover service A
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Hello world action step
         id: hello
         uses: leanix/vsm-discovery-github-action@main
