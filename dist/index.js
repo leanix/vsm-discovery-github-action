@@ -11797,7 +11797,7 @@ function registerService(axios, {id, sbomFile, sourceType, sourceInstance, name,
     formData.append("sourceInstance", sourceInstance);
     formData.append("name", name);
     formData.append("description", description);
-    formData.append("data", "{}"); // todo replace
+    formData.append("data", data);
     if(sbomFile !== null) {
         formData.append("bom", sbomFile);
     }
@@ -15893,18 +15893,24 @@ function validateInputs(inputs) {
 async function main(inputs) {
     validateInputs(inputs)
 
-    const {token, host, sbomFilePath, sourceType} = inputs
+    const {token, host, sbomFilePath, sourceType, data} = inputs
     const axios = await authenticate(host, token)
 
-    // todo get from inputs over defauls
     const serviceName = getGitHubRepoName()
     const sourceInstance = getGitHubOrgName()
+    const description = getGitHubRepoDescription()
+    const _data = data ? data : "{}"
+
+    const id =`${sourceType}-${sourceInstance}-${serviceName}`
+    core.info(`Auto-generated service Id: ${id}`)
+
     const defaults = {
-        id: `${sourceType}-${sourceInstance}-${serviceName}`,
+        id,
         sourceType,
         sourceInstance,
         name: serviceName,
-        description: getGitHubRepoDescription()
+        description,
+        data: _data
     }
     const withOverrideDefaults = {
         ...defaults,
