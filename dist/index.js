@@ -11797,7 +11797,7 @@ function registerService(axios, {id, sbomFile, sourceType, sourceInstance, name,
     formData.append("sourceInstance", sourceInstance);
     formData.append("name", name);
     formData.append("description", description);
-    formData.append("data", data);
+    formData.append("data", "{}"); // todo replace
     if(sbomFile !== null) {
         formData.append("bom", sbomFile);
     }
@@ -15846,6 +15846,8 @@ const sbomFilePath = core.getInput('sbom-path');
 const data = core.getInput('additional-data');
 const serviceName = core.getInput('service-name');
 const sourceType = core.getInput('source-type');
+
+console.log('additional data', data)
 
 main({
     host,
