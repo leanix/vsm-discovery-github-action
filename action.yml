@@ -14,7 +14,7 @@ inputs:
   service-description:
     description: "The description of the service."
     required: false
-    default: ""
+    default: " "
   additional-data:
     description: "A key-value object holding any additional metadata about the service you want to bring into VSM."
     required: false
