@@ -49,10 +49,12 @@ function validateInputs(inputs) {
         throw new Error('Please add LXVSM_TECHNICAL_USER_TOKEN in your secrets. Generate the token from the VSM workspace under technical users tab.')
     }
 
-    try {
-        JSON.parse(data)
-    } catch (_) {
-        throw new Error(`additional-data field is not valid json (formatted to string)`)
+    if(typeof data === 'string') {
+        try {
+            JSON.parse(data)
+        } catch (_) {
+            throw new Error(`additional-data field is not valid json (formatted to string)`)
+        }
     }
 }
 
