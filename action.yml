@@ -29,6 +29,10 @@ inputs:
     description: "The location of the SBOM file that is generated in CycloneDX specification. Accepted only JSON format. Read me about in the documentation for generating the SBOM file correctly. By default bom.json (path: /bom.json) is attempted in the root folder."
     required: false
     default: "/bom.json"
+  dry-run:
+    description: "Validates the inputs without actually submitting the data to VSM"
+    required: false
+    default: false
 runs:
   using: 'node16'
   main: 'dist/index.js'
