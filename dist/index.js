@@ -15751,7 +15751,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(6257);
 const github = __nccwpck_require__(5337);
 const fs = __nccwpck_require__(7147);
-const axios = (__nccwpck_require__(2153)["default"]);
+const axios = __nccwpck_require__(2153);
 
 function getSbomFile(sbomFilePath) {
     console.log("Getting generated sbom file");
@@ -15862,7 +15862,7 @@ async function main(inputs) {
     validateInputs(inputs)
 
     const {token, host, sbomFilePath,} = inputs
-    const axios = await authenticate(token, host)
+    const axios = await authenticate(host, token)
 
     // todo get from inputs over defauls
     const serviceName = getGitHubRepoName()
