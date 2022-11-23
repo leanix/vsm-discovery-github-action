@@ -22,6 +22,9 @@ inputs:
     description: "The source system of the service e.g. CI/CD"
     required: false
     default: "cicd"
+  source-instance:
+    description: "The individual instance within the source system. By default GitHub organisation same is picked."
+    required: false
   sbom-path:
     description: "The location of the SBOM file that is generated in CycloneDX specification. Accepted only JSON format. Read me about in the documentation for generating the SBOM file correctly. By default bom.json (path: /bom.json) is attempted in the root folder."
     required: false
