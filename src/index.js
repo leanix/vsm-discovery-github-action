@@ -71,7 +71,7 @@ async function main(inputs) {
 
     console.log(withOverrideDefaults)
 
-    // await registerService(axios, {
-    //     ...withOverrideDefaults,
-    // }, sbomFile)
+    await registerService(axios, {
+        ...withOverrideDefaults,
+    }, sbomFile)
 }
