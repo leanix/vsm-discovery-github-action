@@ -15830,7 +15830,7 @@ const fs = __nccwpck_require__(7147);
 
 const {authenticate} = __nccwpck_require__(6225)
 const {registerService} = __nccwpck_require__(238)
-const {getGitHubOrgName, getGitHubRepoDescription, getGitHubRepoName} = __nccwpck_require__(7408)
+const {getGitHubOrgName, getGitHubRepoName} = __nccwpck_require__(7408)
 
 // start
 const host = core.getInput('host');
@@ -15852,20 +15852,16 @@ main({
 }).then().catch(e => core.setFailed(`Failed to register service. Error: ${e.message}`))
 
 function getSbomFile(sbomFilePath) {
-    if (!sbomFilePath || !fs.existsSync(sbomFilePath)) {
-        core.warning("Could not find SBOM file. Follow the documentation in README.md to learn how to generate SBOM file.");
-        return null;
-    }
-
+    const _sbomFilePath = `.${sbomFilePath}`
     try { // validate if the file is a valid sbom json file
-        let file = fs.readFileSync(sbomFilePath, 'utf-8');
+        let file = fs.readFileSync(_sbomFilePath, 'utf-8');
         JSON.parse(file)
     } catch (e) {
         core.warning(`Invalid CycloneDX SBOM json file. Error: ${e.message}`);
         return null;
     }
 
-    return fs.createReadStream(sbomFilePath);
+    return fs.createReadStream(_sbomFilePath);
 }
 
 function validateInputs(inputs) {
@@ -15873,6 +15869,10 @@ function validateInputs(inputs) {
 
     if (!token) {
         throw new Error('Please add LXVSM_TECHNICAL_USER_TOKEN in your secrets. Generate the token from the VSM workspace under technical users tab.')
+    }
+
+    if (!sbomFilePath || !fs.existsSync(`.${sbomFilePath}`)) {
+        core.warning("Could not find SBOM file. Follow the documentation in README.md to learn how to generate SBOM file.");
     }
 
     // if(typeof data === 'string') {
