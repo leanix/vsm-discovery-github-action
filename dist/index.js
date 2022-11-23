@@ -15833,6 +15833,7 @@ const {registerService} = __nccwpck_require__(238)
 const {getGitHubOrgName, getGitHubRepoName} = __nccwpck_require__(7408)
 
 // start
+const dryRun = core.getInput('dry-run');
 const host = core.getInput('host');
 const token = core.getInput('api-token');
 const sbomFilePath = core.getInput('sbom-path');
@@ -15842,7 +15843,7 @@ const description = core.getInput('service-description');
 const sourceType = core.getInput('source-type');
 const sourceInstance = core.getInput('source-instance')
 
-main({
+main(dryRun, {
     host, token, sbomFilePath, data, name, description, sourceType, sourceInstance
 }).then().catch(e => core.setFailed(`Failed to register service. Error: ${e.message}`))
 
@@ -15870,18 +15871,16 @@ function validateInputs(inputs) {
         core.warning("Could not find SBOM file. Follow the documentation in README.md to learn how to generate SBOM file.");
     }
 
-    // if(typeof data === 'string') {
-    //     try {
-    //         JSON.parse(data)
-    //     } catch (_) {
-    //         throw new Error(`additional-data field is not valid json (formatted to string)`)
-    //     }
-    // }
+    if(data && typeof data === 'string') {
+        try {
+            JSON.parse(data)
+        } catch (_) {
+            throw new Error(`additional-data field is not valid json (formatted to string)`)
+        }
+    }
 }
 
-async function main(inputs) {
-    validateInputs(inputs)
-
+async function main(dryRun, inputs) {
     const {token, host, sbomFilePath, sourceType, data, name, sourceInstance, description} = inputs
     const axios = await authenticate(host, token)
 
@@ -15903,9 +15902,14 @@ async function main(inputs) {
         data: _data,
     }
 
-    await registerService(axios, {
-        ...withOverrideDefaults,
-    }, sbomFile)
+    if (dryRun) {
+        core.info("Valid!")
+        console.log(withOverrideDefaults)
+    } else {
+        await registerService(axios, {
+            ...withOverrideDefaults,
+        }, sbomFile)
+    }
 }
 })();
 
