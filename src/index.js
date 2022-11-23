@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require("fs");
-const axios = require('axios').default;
+const axios = require('axios');
 
 function getSbomFile(sbomFilePath) {
     console.log("Getting generated sbom file");
@@ -112,7 +112,7 @@ async function main(inputs) {
     validateInputs(inputs)
 
     const {token, host, sbomFilePath,} = inputs
-    const axios = await authenticate(token, host)
+    const axios = await authenticate(host, token)
 
     // todo get from inputs over defauls
     const serviceName = getGitHubRepoName()
