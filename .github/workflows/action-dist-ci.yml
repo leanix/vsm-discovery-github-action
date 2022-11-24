@@ -10,6 +10,9 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  SLACK_CHANNEL_NAME: '#team-cider-status-internal'
+
 jobs:
   action-dist-ci:
     name: Build and generate dist files
@@ -59,3 +62,31 @@ jobs:
           else
             echo "Nothing to commit"
           fi
+
+#  post-deploy:
+#    name: Post Deployment
+#    runs-on: ubuntu-latest
+#    needs: [action-dist-ci]
+#    steps:
+#      - name: Inject secret store credentials
+#        uses: leanix/secrets-action@master
+#        with:
+#          secret-store-credentials: ${{ secrets.INJECTED_SECRET_STORE_CREDENTIALS }}
+#
+#      - name: Send build & release fail message
+#        if: needs.action-dist-ci.result == 'failure'
+#        uses: archive/github-actions-slack@v1.0.0
+#        with:
+#          slack-bot-user-oauth-access-token: ${{ env.SLACK_TOKEN }}
+#          slack-channel: ${{ env.SLACK_CHANNEL_NAME }}
+#          slack-text: |
+#            :no_entry_sign: VSM Discovery GitHub action failed to deploy! More information@ ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+#
+#      - name: Send release notification
+#        if: needs.action-dist-ci.result == 'success'
+#        uses: archive/github-actions-slack@v1.0.0
+#        with:
+#          slack-bot-user-oauth-access-token: ${{ env.SLACK_TOKEN }}
+#          slack-channel: ${{ env.SLACK_CHANNEL_NAME }}
+#          slack-text: |
+#            :beers: VSM discovery GitHub action is succcessfully deployed! More information@ ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
