@@ -7,6 +7,7 @@ const { getGitHubOrgName, getGitHubRepoName } = require("./github-util");
 
 // start
 const dryRun = core.getInput("dry-run");
+console.log('dry run', dryRun, 'type', typeof dryRun)
 const host = core.getInput("host");
 const token = core.getInput("api-token");
 const sbomFilePath = core.getInput("sbom-path");
@@ -50,7 +51,7 @@ function validateInputs(inputs) {
 
   if (!token) {
     throw new Error(
-      "Please add LXVSM_TECHNICAL_USER_TOKEN in your secrets. Generate the token from the VSM workspace under technical users tab."
+      "Could not find api-token in your secrets. Generate the token from the VSM workspace under technical users tab."
     );
   }
 
