@@ -53,7 +53,7 @@ The location of the SBOM file that is generated in CycloneDX specification. Acce
 
 **Default:** /bom.json
 
-**Recommendation:** Generate the SBOM file during the same CI/CD to ensure the data is up-to-date
+**Recommendation:** Generate the SBOM file during the same CI/CD to ensure the data is up-to-date. Even if the SBOM file is not found the service registration will go through.
 
 #### `additional-data`
 A key-value object holding any additional metadata about the service you want to bring into VSM.
