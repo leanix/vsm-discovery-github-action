@@ -15852,7 +15852,8 @@ const { registerService } = __nccwpck_require__(238);
 const { getGitHubOrgName, getGitHubRepoName } = __nccwpck_require__(7408);
 
 // start
-const dryRun = core.getInput("dry-run");
+let dryRun = core.getInput("dry-run");
+dryRun = !(dryRun === 'false');
 console.log('dry run', dryRun, 'type', typeof dryRun)
 const host = core.getInput("host");
 const token = core.getInput("api-token");
