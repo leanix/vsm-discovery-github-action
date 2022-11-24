@@ -6,7 +6,8 @@ const { registerService } = require("./discovery-api-client");
 const { getGitHubOrgName, getGitHubRepoName } = require("./github-util");
 
 // start
-const dryRun = core.getInput("dry-run");
+let dryRun = core.getInput("dry-run");
+dryRun = !(dryRun === 'false');
 console.log('dry run', dryRun, 'type', typeof dryRun)
 const host = core.getInput("host");
 const token = core.getInput("api-token");
