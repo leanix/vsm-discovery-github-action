@@ -89,7 +89,7 @@ async function main(dryRun, inputs) {
 
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
-  const serviceDescription = description || getGitHubRepoName();
+  const serviceDescription = description || `This service has been brought in by the GitHub action (${getGitHubRepoName()})`;
   const _sourceInstance = sourceInstance || getGitHubOrgName();
   const _data = data && typeof data === "string" ? data : "{}";
 
