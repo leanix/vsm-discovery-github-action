@@ -15854,7 +15854,6 @@ const { getGitHubOrgName, getGitHubRepoName } = __nccwpck_require__(7408);
 // start
 let dryRun = core.getInput("dry-run");
 dryRun = !(dryRun === 'false');
-console.log('dry run', dryRun, 'type', typeof dryRun)
 const host = core.getInput("host");
 const token = core.getInput("api-token");
 const sbomFilePath = core.getInput("sbom-path");
@@ -15940,8 +15939,8 @@ async function main(dryRun, inputs) {
   const _sourceInstance = sourceInstance || getGitHubOrgName();
   const _data = data && typeof data === "string" ? data : "{}";
 
-  const id = `${sourceType}-${sourceInstance}-${serviceName}`;
-  core.info(`Auto-generated service Id: ${id}`);
+  const id = `${sourceType}-${_sourceInstance}-${serviceName}`;
+  core.info(`Auto-generated service Id [ {source-type}-{source-instance}-{service-name} ]: ${id}`);
 
   const withOverrideDefaults = {
     ...inputs,
