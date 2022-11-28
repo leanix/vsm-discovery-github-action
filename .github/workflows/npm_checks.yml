@@ -27,5 +27,4 @@ jobs:
 
       - name: Run Format Checking
         run: |
-          cd ${{ matrix.connector_directories }}
           npm run check-format
