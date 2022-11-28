@@ -32,7 +32,7 @@ Name of the service. By default name of the repository is assumed.
 #### `service-description`
 The description of the service.
 
-**Default:** repository name. example: vsm-discovery-github-action
+**Default:** example: This service has been brought in by the GitHub action (vsm-discovery-github-action)
 
 #### `source-type`
 The source system of the service e.g. CI/CD
