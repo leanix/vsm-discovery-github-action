@@ -23,6 +23,7 @@ async function authenticate(host, token) {
       baseURL: `https://eu-vsm.leanix.net/services/vsm/discovery/v1`,
       headers: {
         Authorization: `Bearer ${res.data.access_token}`,
+        'X-Source': 'vsm-discovery-github-action'
       },
     });
   } catch (e) {
