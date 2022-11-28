@@ -3,7 +3,7 @@ const fs = require("fs");
 
 const { authenticate } = require("./mtm");
 const { registerService } = require("./discovery-api-client");
-const { getGitHubOrgName, getGitHubRepoName } = require("./github-util");
+const { getGitHubOrgName, getGitHubRepoName, getRepoId } = require("./github-util");
 
 // start
 let dryRun = core.getInput("dry-run");
@@ -88,6 +88,7 @@ async function main(dryRun, inputs) {
   const axios = await authenticate(host, token);
 
   const sbomFile = getSbomFile(sbomFilePath);
+  const id = getRepoId()
   const serviceName = name || getGitHubRepoName();
   const serviceDescription =
     description ||
@@ -95,7 +96,7 @@ async function main(dryRun, inputs) {
   const _sourceInstance = sourceInstance || getGitHubOrgName();
   const _data = data && typeof data === "string" ? data : "{}";
 
-  const id = `${sourceType}-${_sourceInstance}-${serviceName}`;
+  // const id = `${sourceType}-${_sourceInstance}-${serviceName}`;
   core.info(
     `Auto-generated service Id [ {source-type}-{source-instance}-{service-name} ]: ${id}`
   );
