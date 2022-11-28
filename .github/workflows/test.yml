@@ -13,10 +13,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      # Provision secrets for VSM API token
+      - name: LeanIX Secrets 🔒
+        uses: leanix/secrets-action@master
+        with:
+          secret-store-credentials: ${{ secrets.INJECTED_SECRET_STORE_CREDENTIALS }}
+
       - name: Hello world action step
         id: hello
         uses: leanix/vsm-discovery-github-action@main
         with:
           dry-run: true
           service-name: test-new-service-name
-          api-token: ${{ secrets.LXVSM_TECHNICAL_USER_TOKEN }}
+          api-token: ${{ env.VSM_LEANIX_API_TOKEN }}
