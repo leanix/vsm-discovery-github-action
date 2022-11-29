@@ -29,15 +29,16 @@ try {
     sourceType,
     sourceInstance,
   })
-      .then()
-      .catch((e) =>
-          core.setFailed(`Failed to register service. Error: ${e.message}`)
-      );
+    .then()
+    .catch((e) =>
+      core.setFailed(`Failed to register service. Error: ${e.message}`)
+    );
 } catch (unhandledGlobalError) {
-  core.error(`Caught unhandled error. Error message: ${unhandledGlobalError.message}`);
+  core.error(
+    `Caught unhandled error. Error message: ${unhandledGlobalError.message}`
+  );
   process.exit(1);
 }
-
 
 function getSbomFile(sbomFilePath) {
   const _sbomFilePath = `.${sbomFilePath}`;
@@ -54,7 +55,7 @@ function getSbomFile(sbomFilePath) {
 }
 
 function sanitiseHost(rawHost) {
-  return host.trim()
+  return host.trim();
 }
 
 async function main(dryRun, inputs) {

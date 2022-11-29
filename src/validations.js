@@ -4,8 +4,10 @@ const core = require("@actions/core");
 function validateInputs(inputs) {
   const { token, data, sbomFilePath, host } = inputs;
 
-  if(host && host.startsWith("http")) {
-    throw new Error("Please enter vsm workspace base url without any suffix. Invalid host input")
+  if (host && host.startsWith("http")) {
+    throw new Error(
+      "Please enter vsm workspace base url without any suffix. Invalid host input"
+    );
   }
 
   if (!token) {
