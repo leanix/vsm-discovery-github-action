@@ -11866,7 +11866,7 @@ const axios = __nccwpck_require__(2153);
 const jwt_decode = __nccwpck_require__(7527);
 
 function getVsmUrl(decoded) {
-  const iss = decoded.principal.iss
+  const iss = decoded.iss
   console.log("iss: ",iss)
   console.log("token",decoded)
   switch (iss) {
