@@ -21,7 +21,7 @@ jobs:
 
       - name: Hello world action step
         id: hello
-        uses: leanix/vsm-discovery-github-action@main
+        uses: leanix/vsm-discovery-github-action@CID-1136---add-new-id-logic
         with:
           dry-run: true
           service-name: test-new-service-name
