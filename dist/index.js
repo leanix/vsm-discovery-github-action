@@ -11839,20 +11839,7 @@ function getGitHubOrgName() {
   return github.context.repo.owner;
 }
 
-async function getRepoId(token) {
-  const context = github.context;
-  const octokit = github.getOctokit(token);
-  const {
-    data: { node_id: repoId },
-  } = await octokit.rest.repos.get({
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-  });
-
-  return repoId;
-}
-
-module.exports = { getGitHubOrgName, getGitHubRepoName, getRepoId };
+module.exports = { getGitHubOrgName, getGitHubRepoName };
 
 
 /***/ }),
@@ -11864,7 +11851,9 @@ const axios = __nccwpck_require__(2153);
 const jwt_decode = __nccwpck_require__(7527);
 
 function getVsmUrl(decoded) {
-  const iss = decoded.principal.iss
+  const iss = decoded.iss
+  console.log("iss: ",iss)
+  console.log("token",decoded)
   switch (iss) {
     case "https://eu-svc.leanix.net": return "eu-vsm.leanix.net"
     case "https://us-svc.leanix.net": return "us-vsm.leanix.net"
@@ -11928,11 +11917,7 @@ const fs = __nccwpck_require__(7147);
 const core = __nccwpck_require__(6257);
 
 function validateInputs(inputs) {
-  const { token, data, githubToken, sbomFilePath } = inputs;
-
-  if (!githubToken) {
-    throw new Error("Could not find github-token in your secrets or inputs.");
-  }
+  const { token, data, sbomFilePath } = inputs;
 
   if (!token) {
     throw new Error(
@@ -15936,7 +15921,6 @@ const { validateInputs } = __nccwpck_require__(8322);
 const {
   getGitHubOrgName,
   getGitHubRepoName,
-  getRepoId,
 } = __nccwpck_require__(7408);
 
 // start
@@ -15944,7 +15928,6 @@ let dryRun = core.getInput("dry-run");
 dryRun = !(dryRun === "false");
 const host = core.getInput("host");
 const token = core.getInput("api-token");
-const githubToken = core.getInput("github-token");
 const sbomFilePath = core.getInput("sbom-path");
 const data = core.getInput("additional-data");
 const name = core.getInput("service-name");
@@ -15961,7 +15944,6 @@ main(dryRun, {
   description,
   sourceType,
   sourceInstance,
-  githubToken,
 })
   .then()
   .catch((e) =>
@@ -15993,12 +15975,10 @@ async function main(dryRun, inputs) {
     name,
     sourceInstance,
     description,
-    githubToken,
   } = inputs;
   const axios = await authenticate(host, token);
-
+  
   const sbomFile = getSbomFile(sbomFilePath);
-  const id = await getRepoId(githubToken);
   const serviceName = name || getGitHubRepoName();
   const serviceDescription =
     description ||
@@ -16006,7 +15986,9 @@ async function main(dryRun, inputs) {
   const _sourceInstance = sourceInstance || getGitHubOrgName();
   const _data = data && typeof data === "string" ? data : "{}";
 
-  core.info(`Auto-generated service Id: ${id}`);
+  const id = `${serviceName}`
+
+  core.info(`Auto-generated service Id [ {service-name} ]: ${id}`);
 
   const withOverrideDefaults = {
     ...inputs,

@@ -2,11 +2,7 @@ const fs = require("fs");
 const core = require("@actions/core");
 
 function validateInputs(inputs) {
-  const { token, data, githubToken, sbomFilePath } = inputs;
-
-  if (!githubToken) {
-    throw new Error("Could not find github-token in your secrets or inputs.");
-  }
+  const { token, data, sbomFilePath } = inputs;
 
   if (!token) {
     throw new Error(
