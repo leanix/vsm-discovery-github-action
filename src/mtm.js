@@ -2,7 +2,7 @@ const axios = require("axios");
 const jwt_decode = require('jwt-decode');
 
 function getVsmUrl(decoded) {
-  const iss = decoded.principal.iss
+  const iss = decoded.iss
   console.log("iss: ",iss)
   console.log("token",decoded)
   switch (iss) {
