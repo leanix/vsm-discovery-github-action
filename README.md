@@ -18,9 +18,9 @@ Generate and store LeanIX technical user token in GitHub repository secrets (LXV
 #### Inputs (defaults and recommendations)
 
 #### `host`
-**Required** The LeanIX host where the VSM workspace is located, e.g.: eu
+**Required** The LeanIX host base url of your workspace, e.g.: leanix.leanix.net
 
-**Default:** `eu`
+**Default:** `eu.leanix.net`
 
 #### `api-token`
 **Required** technical user token for VSM workspace
