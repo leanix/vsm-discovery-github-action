@@ -15970,7 +15970,7 @@ async function main(dryRun, inputs) {
   const axios = await authenticate(host, token);
 
   const sbomFile = getSbomFile(sbomFilePath);
-  const id = getRepoId(githubToken);
+  const id = await getRepoId(githubToken);
   const serviceName = name || getGitHubRepoName();
   const serviceDescription =
     description ||
