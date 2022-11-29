@@ -1,0 +1,32 @@
+name: notification
+
+concurrency:
+  group: notification-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  SLACK_CHANNEL_NAME: '#team-cider-status-internal'
+
+jobs:
+  post-deploy:
+    name: Post Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inject secret store credentials
+        uses: leanix/secrets-action@master
+        with:
+          secret-store-credentials: ${{ secrets.INJECTED_SECRET_STORE_CREDENTIALS }}
+
+      - name: Send release notification
+        uses: archive/github-actions-slack@v1.0.0
+        with:
+          slack-bot-user-oauth-access-token: ${{ env.SLACK_TOKEN }}
+          slack-channel: ${{ env.SLACK_CHANNEL_NAME }}
+          slack-text: |
+            :beers: VSM discovery GitHub action is succcessfully deployed! More information@ ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

@@ -3,13 +3,19 @@ const fs = require("fs");
 
 const { authenticate } = require("./mtm");
 const { registerService } = require("./discovery-api-client");
-const { getGitHubOrgName, getGitHubRepoName } = require("./github-util");
+const { validateInputs } = require("./validations");
+const {
+  getGitHubOrgName,
+  getGitHubRepoName,
+  getRepoId,
+} = require("./github-util");
 
 // start
 let dryRun = core.getInput("dry-run");
-dryRun = !(dryRun === 'false');
+dryRun = !(dryRun === "false");
 const host = core.getInput("host");
 const token = core.getInput("api-token");
+const githubToken = core.getInput("github-token");
 const sbomFilePath = core.getInput("sbom-path");
 const data = core.getInput("additional-data");
 const name = core.getInput("service-name");
@@ -26,6 +32,7 @@ main(dryRun, {
   description,
   sourceType,
   sourceInstance,
+  githubToken,
 })
   .then()
   .catch((e) =>
@@ -46,32 +53,6 @@ function getSbomFile(sbomFilePath) {
   return fs.createReadStream(_sbomFilePath);
 }
 
-function validateInputs(inputs) {
-  const { token, data } = inputs;
-
-  if (!token) {
-    throw new Error(
-      "Could not find api-token in your secrets. Generate the token from the VSM workspace under technical users tab."
-    );
-  }
-
-  if (!sbomFilePath || !fs.existsSync(`.${sbomFilePath}`)) {
-    core.warning(
-      "Could not find SBOM file. Follow the documentation in README.md to learn how to generate SBOM file."
-    );
-  }
-
-  if (data && typeof data === "string") {
-    try {
-      JSON.parse(data);
-    } catch (_) {
-      throw new Error(
-        `additional-data field is not valid json (formatted to string)`
-      );
-    }
-  }
-}
-
 async function main(dryRun, inputs) {
   validateInputs(inputs);
 
@@ -79,22 +60,24 @@ async function main(dryRun, inputs) {
     token,
     host,
     sbomFilePath,
-    sourceType,
     data,
     name,
     sourceInstance,
     description,
+    githubToken,
   } = inputs;
   const axios = await authenticate(host, token);
 
   const sbomFile = getSbomFile(sbomFilePath);
+  const id = getRepoId(githubToken);
   const serviceName = name || getGitHubRepoName();
-  const serviceDescription = description || `This service has been brought in by the GitHub action (${getGitHubRepoName()})`;
+  const serviceDescription =
+    description ||
+    `This service has been brought in by the GitHub action (${getGitHubRepoName()})`;
   const _sourceInstance = sourceInstance || getGitHubOrgName();
   const _data = data && typeof data === "string" ? data : "{}";
 
-  const id = `${sourceType}-${_sourceInstance}-${serviceName}`;
-  core.info(`Auto-generated service Id [ {source-type}-{source-instance}-{service-name} ]: ${id}`);
+  core.info(`Auto-generated service Id: ${id}`);
 
   const withOverrideDefaults = {
     ...inputs,
@@ -109,12 +92,6 @@ async function main(dryRun, inputs) {
     core.info("Valid!");
     console.log(withOverrideDefaults);
   } else {
-    await registerService(
-      axios,
-      {
-        ...withOverrideDefaults,
-      },
-      sbomFile
-    );
+    await registerService(axios, withOverrideDefaults, sbomFile);
   }
 }

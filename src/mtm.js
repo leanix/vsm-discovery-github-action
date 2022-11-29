@@ -20,7 +20,7 @@ async function authenticate(host, token) {
     console.info(`Successfully generated JWT token.`);
 
     return axios.create({
-      baseURL: `https://eu-vsm.leanix.net/services/vsm/discovery/v1`,
+      baseURL: `https://eu-vsm.leanix.net/services/vsm/discovery/v1`, // this will predictably fail for cases != eu
       headers: {
         Authorization: `Bearer ${res.data.access_token}`,
       },
