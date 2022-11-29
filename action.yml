@@ -8,6 +8,9 @@ inputs:
   api-token:
     description: "technical user token for VSM workspace"
     required: true
+  github-token:
+    description: "Personal access token (PAT) used to fetch the repository. The PAT is configured with the local git config, which enables your scripts to run authenticated git commands. We recommend using a service account with the least permissions necessary. Also when generating a new PAT, select the least scopes necessary. [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)"
+    required: true
   service-name:
     description: "Name of the service. By default name of the repository is assumed."
     required: false
@@ -29,15 +32,6 @@ inputs:
     description: "The location of the SBOM file that is generated in CycloneDX specification. Accepted only JSON format. Read me about in the documentation for generating the SBOM file correctly. By default bom.json (path: /bom.json) is attempted in the root folder."
     required: false
     default: "/bom.json"
-  github-token:
-    description: >
-      Personal access token (PAT) used to fetch the repository. The PAT is configured
-      with the local git config, which enables your scripts to run authenticated git
-      commands. The post-job step removes the PAT.
-      We recommend using a service account with the least permissions necessary.
-      Also when generating a new PAT, select the least scopes necessary.
-      [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
-    default: ${{ github.token }}
   dry-run:
     description: "Validates the inputs without actually submitting the data to VSM"
     required: false

@@ -92,24 +92,24 @@ jobs:
           - name: Checkout
              uses: actions/checkout@v3
 
-      - name: Set up JDK temurin 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+          - name: Set up JDK temurin 17
+            uses: actions/setup-java@v3
+            with:
+              distribution: 'temurin'
+              java-version: '17'
 
-      - name: Run gradlew cyclonedxBom task
-        uses: gradle/gradle-build-action@v2
-        with:
-          build-root-directory: .
-          arguments: cyclonedxBom
+          - name: Run gradlew cyclonedxBom task
+            uses: gradle/gradle-build-action@v2
+            with:
+              build-root-directory: .
+              arguments: cyclonedxBom
 
-       # Invoke the GitHub action to register the service with SBOM
-       - name: VSM discovery
-         uses: leanix/vsm-discovery-github-action@main
-         with:
-            api-token: ${{ secrets.VSM_LEANIX_API_TOKEN }}
-          # dry-run: true
+           # Invoke the GitHub action to register the service with SBOM
+           - name: VSM discovery
+             uses: leanix/vsm-discovery-github-action@main
+             with:
+                api-token: ${{ secrets.VSM_LEANIX_API_TOKEN }}
+              # dry-run: true
 ```
 
 #### Setup for a NodeJS project
@@ -140,10 +140,10 @@ jobs:
                 npm install --global @cyclonedx/cyclonedx-npm
                 cyclonedx-npm --output-file "bom.json"
         
-          # Invoke the GitHub action to register the service with SBOM
-          - name: VSM discovery
-            uses: leanix/vsm-discovery-github-action@main
-            with:
-              api-token: ${{ env.VSM_LEANIX_API_TOKEN }}
-            # dry-run: true
+        # Invoke the GitHub action to register the service with SBOM
+        - name: VSM discovery
+          uses: leanix/vsm-discovery-github-action@main
+          with:
+            api-token: ${{ env.VSM_LEANIX_API_TOKEN }}
+          # dry-run: true
 ```
