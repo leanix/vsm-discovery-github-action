@@ -11849,6 +11849,8 @@ async function getRepoId(token) {
     repo: context.repo.repo,
   });
 
+  console.log(repoId)
+
   return repoId;
 }
 
