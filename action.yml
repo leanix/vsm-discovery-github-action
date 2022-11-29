@@ -6,8 +6,8 @@ inputs:
     required: true
     default: "eu.leanix.net"
   api-token:
-    description: "technical user token for VSM workspace. Add VSM_LEANIX_API_TOKEN to your environment to use the default"
-    default: ${{ env.VSM_LEANIX_API_TOKEN }}
+    description: "technical user token for VSM workspace"
+    required: true
   service-name:
     description: "Name of the service. By default name of the repository is assumed."
     required: false
