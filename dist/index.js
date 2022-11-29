@@ -11846,7 +11846,7 @@ async function authenticate(host, token) {
   }).toString();
   try {
     const res = await axios.post(
-      `https://${host}/services/mtm/v1/oauth2/token`,
+      `https://${host}.leanix.net/services/mtm/v1/oauth2/token`,
       data,
       {
         headers: {
@@ -11859,9 +11859,10 @@ async function authenticate(host, token) {
     console.info(`Successfully generated JWT token.`);
 
     return axios.create({
-      baseURL: `https://eu-vsm.leanix.net/services/vsm/discovery/v1`,
+      baseURL: `https://${host}-vsm.leanix.net/services/vsm/discovery/v1`,
       headers: {
         Authorization: `Bearer ${res.data.access_token}`,
+        "X-Lx-Vsm-Discovery-Source": "vsm-discovery-github-action",
       },
     });
   } catch (e) {
