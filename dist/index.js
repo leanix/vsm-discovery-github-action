@@ -11851,17 +11851,24 @@ const axios = __nccwpck_require__(2153);
 const jwt_decode = __nccwpck_require__(7527);
 
 function getVsmUrl(decoded) {
-  const iss = decoded.iss
-  console.log("iss: ",iss)
-  console.log("token",decoded)
+  const iss = decoded.iss;
   switch (iss) {
-    case "https://eu-svc.leanix.net": return "eu-vsm.leanix.net"
-    case "https://us-svc.leanix.net": return "us-vsm.leanix.net"
-    case "https://ca-svc.leanix.net": return "ca-vsm.leanix.net"
-    case "https://au-svc.leanix.net": return "au-vsm.leanix.net"
-    case "https://de-svc.leanix.net": return "de-vsm.leanix.net"
-    case "https://ch-svc.leanix.net": return "ch-vsm.leanix.net"
-    default: return new Error("Unable to register service. Error: Unable to identify the VSM host")
+    case "https://eu-svc.leanix.net":
+      return "eu-vsm.leanix.net";
+    case "https://us-svc.leanix.net":
+      return "us-vsm.leanix.net";
+    case "https://ca-svc.leanix.net":
+      return "ca-vsm.leanix.net";
+    case "https://au-svc.leanix.net":
+      return "au-vsm.leanix.net";
+    case "https://de-svc.leanix.net":
+      return "de-vsm.leanix.net";
+    case "https://ch-svc.leanix.net":
+      return "ch-vsm.leanix.net";
+    default:
+      return new Error(
+        "Unable to register service. Error: Unable to identify the VSM host"
+      );
   }
 }
 
@@ -11886,7 +11893,7 @@ async function authenticate(host, token) {
 
     const bearerToken = res.data.access_token;
 
-    const vsmHost = getVsmUrl(jwt_decode(bearerToken))
+    const vsmHost = getVsmUrl(jwt_decode(bearerToken));
 
     return axios.create({
       baseURL: `https://${vsmHost}/services/vsm/discovery/v1`,
@@ -15918,10 +15925,7 @@ const fs = __nccwpck_require__(7147);
 const { authenticate } = __nccwpck_require__(6225);
 const { registerService } = __nccwpck_require__(238);
 const { validateInputs } = __nccwpck_require__(8322);
-const {
-  getGitHubOrgName,
-  getGitHubRepoName,
-} = __nccwpck_require__(7408);
+const { getGitHubOrgName, getGitHubRepoName } = __nccwpck_require__(7408);
 
 // start
 let dryRun = core.getInput("dry-run");
@@ -15967,17 +15971,10 @@ function getSbomFile(sbomFilePath) {
 async function main(dryRun, inputs) {
   validateInputs(inputs);
 
-  const {
-    token,
-    host,
-    sbomFilePath,
-    data,
-    name,
-    sourceInstance,
-    description,
-  } = inputs;
+  const { token, host, sbomFilePath, data, name, sourceInstance, description } =
+    inputs;
   const axios = await authenticate(host, token);
-  
+
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
   const serviceDescription =
@@ -15986,7 +15983,7 @@ async function main(dryRun, inputs) {
   const _sourceInstance = sourceInstance || getGitHubOrgName();
   const _data = data && typeof data === "string" ? data : "{}";
 
-  const id = `${serviceName}`
+  const id = `${serviceName}`;
 
   core.info(`Auto-generated service Id [ {service-name} ]: ${id}`);
 
