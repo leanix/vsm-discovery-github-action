@@ -1,4 +1,18 @@
 const axios = require("axios");
+const jwt_decode = require('jwt-decode');
+
+function getVsmUrl(decoded) {
+  const iss = decoded.principal.iss
+  switch (iss) {
+    case "https://eu-svc.leanix.net": return "eu-vsm.leanix.net"
+    case "https://us-svc.leanix.net": return "us-vsm.leanix.net"
+    case "https://ca-svc.leanix.net": return "ca-vsm.leanix.net"
+    case "https://au-svc.leanix.net": return "au-vsm.leanix.net"
+    case "https://de-svc.leanix.net": return "de-vsm.leanix.net"
+    case "https://ch-svc.leanix.net": return "ch-vsm.leanix.net"
+    default: return new Error("Unable to register service. Error: Unable to identify the VSM host")
+  }
+}
 
 async function authenticate(host, token) {
   const encodedToken = Buffer.from(`apitoken:${token}`).toString("base64");
@@ -7,7 +21,7 @@ async function authenticate(host, token) {
   }).toString();
   try {
     const res = await axios.post(
-      `https://${host}.leanix.net/services/mtm/v1/oauth2/token`,
+      `https://${host}/services/mtm/v1/oauth2/token`,
       data,
       {
         headers: {
@@ -19,10 +33,14 @@ async function authenticate(host, token) {
 
     console.info(`Successfully generated JWT token.`);
 
+    const bearerToken = res.data.access_token;
+
+    const vsmHost = getVsmUrl(jwt_decode(bearerToken))
+
     return axios.create({
-      baseURL: `https://${host}-vsm.leanix.net/services/vsm/discovery/v1`,
+      baseURL: `https://${vsmHost}/services/vsm/discovery/v1`,
       headers: {
-        Authorization: `Bearer ${res.data.access_token}`,
+        Authorization: `Bearer ${bearerToken}`,
         "X-Lx-Vsm-Discovery-Source": "vsm-discovery-github-action",
       },
     });
