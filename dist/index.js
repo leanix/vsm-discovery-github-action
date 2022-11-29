@@ -11867,6 +11867,7 @@ const jwt_decode = __nccwpck_require__(7527);
 
 function getVsmUrl(decoded) {
   const iss = decoded.principal.iss
+  console.log(iss)
   switch (iss) {
     case "https://eu-svc.leanix.net": return "eu-vsm.leanix.net"
     case "https://us-svc.leanix.net": return "us-vsm.leanix.net"
