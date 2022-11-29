@@ -2,9 +2,9 @@ name: "LeanIX VSM Discovery"
 description: "Integrate into your CI/CD pipeline to manage service and SBOM information automatically for your LeanIX VSM workspace"
 inputs:
   host:
-    description: "The LeanIX host where the connector is located, e.g.: eu.leanix.net"
+    description: "The LeanIX host where the connector is located, e.g.: eu"
     required: true
-    default: "eu.leanix.net"
+    default: "eu"
   api-token:
     description: "technical user token for VSM workspace"
     required: true
