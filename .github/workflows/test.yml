@@ -26,3 +26,4 @@ jobs:
           dry-run: true
           service-name: test-new-service-name
           api-token: ${{ env.VSM_LEANIX_API_TOKEN }}
+          github-token: ${{ secrets.LX_GITHUB_TOKEN }}
