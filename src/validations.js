@@ -1,5 +1,5 @@
-import fs from "fs";
-import core from "@actions/core";
+const fs = require("fs");
+const core = require("@actions/core");
 
 function validateInputs(inputs) {
   const { token, data, githubToken, sbomFilePath } = inputs;
