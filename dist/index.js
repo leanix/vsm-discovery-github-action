@@ -11924,7 +11924,13 @@ const fs = __nccwpck_require__(7147);
 const core = __nccwpck_require__(6257);
 
 function validateInputs(inputs) {
-  const { token, data, sbomFilePath } = inputs;
+  const { token, data, sbomFilePath, host } = inputs;
+
+  if (host && host.startsWith("http")) {
+    throw new Error(
+      "Please enter vsm workspace base url without any suffix. Invalid host input"
+    );
+  }
 
   if (!token) {
     throw new Error(
@@ -15927,32 +15933,39 @@ const { registerService } = __nccwpck_require__(238);
 const { validateInputs } = __nccwpck_require__(8322);
 const { getGitHubOrgName, getGitHubRepoName } = __nccwpck_require__(7408);
 
-// start
-let dryRun = core.getInput("dry-run");
-dryRun = !(dryRun === "false");
-const host = core.getInput("host");
-const token = core.getInput("api-token");
-const sbomFilePath = core.getInput("sbom-path");
-const data = core.getInput("additional-data");
-const name = core.getInput("service-name");
-const description = core.getInput("service-description");
-const sourceType = core.getInput("source-type");
-const sourceInstance = core.getInput("source-instance");
+try {
+  // start
+  let dryRun = core.getInput("dry-run");
+  dryRun = !(dryRun === "false");
+  const host = core.getInput("host");
+  const token = core.getInput("api-token");
+  const sbomFilePath = core.getInput("sbom-path");
+  const data = core.getInput("additional-data");
+  const name = core.getInput("service-name");
+  const description = core.getInput("service-description");
+  const sourceType = core.getInput("source-type");
+  const sourceInstance = core.getInput("source-instance");
 
-main(dryRun, {
-  host,
-  token,
-  sbomFilePath,
-  data,
-  name,
-  description,
-  sourceType,
-  sourceInstance,
-})
-  .then()
-  .catch((e) =>
-    core.setFailed(`Failed to register service. Error: ${e.message}`)
+  main(dryRun, {
+    host,
+    token,
+    sbomFilePath,
+    data,
+    name,
+    description,
+    sourceType,
+    sourceInstance,
+  })
+    .then()
+    .catch((e) =>
+      core.setFailed(`Failed to register service. Error: ${e.message}`)
+    );
+} catch (unhandledGlobalError) {
+  core.error(
+    `Caught unhandled error. Error message: ${unhandledGlobalError.message}`
   );
+  process.exit(1);
+}
 
 function getSbomFile(sbomFilePath) {
   const _sbomFilePath = `.${sbomFilePath}`;
@@ -15968,12 +15981,17 @@ function getSbomFile(sbomFilePath) {
   return fs.createReadStream(_sbomFilePath);
 }
 
+function sanitiseHost(rawHost) {
+  return host.trim();
+}
+
 async function main(dryRun, inputs) {
   validateInputs(inputs);
 
   const { token, host, sbomFilePath, data, name, sourceInstance, description } =
     inputs;
-  const axios = await authenticate(host, token);
+  const sanitisedHost = sanitiseHost(host);
+  const axios = await authenticate(sanitisedHost, token);
 
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
@@ -15989,6 +16007,7 @@ async function main(dryRun, inputs) {
 
   const withOverrideDefaults = {
     ...inputs,
+    host: sanitisedHost,
     id,
     name: serviceName,
     sourceInstance: _sourceInstance,
