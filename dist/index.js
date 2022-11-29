@@ -11829,7 +11829,20 @@ function getGitHubOrgName() {
   return github.context.repo.owner;
 }
 
-module.exports = { getGitHubOrgName, getGitHubRepoName };
+async function getRepoId(token) {
+  const context = github.context;
+  const octokit = github.getOctokit(token);
+  const {
+    data: { node_id: repoId },
+  } = await octokit.rest.repos.get({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+  });
+
+  return repoId;
+}
+
+module.exports = { getGitHubOrgName, getGitHubRepoName, getRepoId };
 
 
 /***/ }),
@@ -11876,6 +11889,54 @@ async function authenticate(host, token) {
 }
 
 module.exports = { authenticate };
+
+
+/***/ }),
+
+/***/ 8322:
+/***/ ((module, __webpack_exports__, __nccwpck_require__) => {
+
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7147);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(6257);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_1__);
+/* module decorator */ module = __nccwpck_require__.hmd(module);
+
+
+
+function validateInputs(inputs) {
+  const { token, data, githubToken, sbomFilePath } = inputs;
+
+  if (!githubToken) {
+    throw new Error("Could not find github-token in your secrets or inputs.");
+  }
+
+  if (!token) {
+    throw new Error(
+      "Could not find api-token in your secrets. Generate the token from the VSM workspace under technical users tab."
+    );
+  }
+
+  if (!sbomFilePath || !fs__WEBPACK_IMPORTED_MODULE_0___default().existsSync(`.${sbomFilePath}`)) {
+    _actions_core__WEBPACK_IMPORTED_MODULE_1___default().warning(
+      "Could not find SBOM file. Follow the documentation in README.md to learn how to generate SBOM file."
+    );
+  }
+
+  if (data && typeof data === "string") {
+    try {
+      JSON.parse(data);
+    } catch (_) {
+      throw new Error(
+        `additional-data field is not valid json (formatted to string)`
+      );
+    }
+  }
+}
+
+module.exports = { validateInputs };
 
 
 /***/ }),
@@ -15818,8 +15879,8 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
+/******/ 			id: moduleId,
+/******/ 			loaded: false,
 /******/ 			exports: {}
 /******/ 		};
 /******/ 	
@@ -15832,11 +15893,69 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 			if(threw) delete __webpack_module_cache__[moduleId];
 /******/ 		}
 /******/ 	
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__nccwpck_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__nccwpck_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/harmony module decorator */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.hmd = (module) => {
+/******/ 			module = Object.create(module);
+/******/ 			if (!module.children) module.children = [];
+/******/ 			Object.defineProperty(module, 'exports', {
+/******/ 				enumerable: true,
+/******/ 				set: () => {
+/******/ 					throw new Error('ES Modules may not assign module.exports or exports.*, Use ESM export syntax, instead: ' + module.id);
+/******/ 				}
+/******/ 			});
+/******/ 			return module;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
@@ -15850,13 +15969,19 @@ const fs = __nccwpck_require__(7147);
 
 const { authenticate } = __nccwpck_require__(6225);
 const { registerService } = __nccwpck_require__(238);
-const { getGitHubOrgName, getGitHubRepoName } = __nccwpck_require__(7408);
+const { validateInputs } = __nccwpck_require__(8322);
+const {
+  getGitHubOrgName,
+  getGitHubRepoName,
+  getRepoId,
+} = __nccwpck_require__(7408);
 
 // start
 let dryRun = core.getInput("dry-run");
 dryRun = !(dryRun === "false");
 const host = core.getInput("host");
 const token = core.getInput("api-token");
+const githubToken = core.getInput("github-token");
 const sbomFilePath = core.getInput("sbom-path");
 const data = core.getInput("additional-data");
 const name = core.getInput("service-name");
@@ -15873,6 +15998,7 @@ main(dryRun, {
   description,
   sourceType,
   sourceInstance,
+  githubToken,
 })
   .then()
   .catch((e) =>
@@ -15893,32 +16019,6 @@ function getSbomFile(sbomFilePath) {
   return fs.createReadStream(_sbomFilePath);
 }
 
-function validateInputs(inputs) {
-  const { token, data } = inputs;
-
-  if (!token) {
-    throw new Error(
-      "Could not find api-token in your secrets. Generate the token from the VSM workspace under technical users tab."
-    );
-  }
-
-  if (!sbomFilePath || !fs.existsSync(`.${sbomFilePath}`)) {
-    core.warning(
-      "Could not find SBOM file. Follow the documentation in README.md to learn how to generate SBOM file."
-    );
-  }
-
-  if (data && typeof data === "string") {
-    try {
-      JSON.parse(data);
-    } catch (_) {
-      throw new Error(
-        `additional-data field is not valid json (formatted to string)`
-      );
-    }
-  }
-}
-
 async function main(dryRun, inputs) {
   validateInputs(inputs);
 
@@ -15926,15 +16026,16 @@ async function main(dryRun, inputs) {
     token,
     host,
     sbomFilePath,
-    sourceType,
     data,
     name,
     sourceInstance,
     description,
+    githubToken,
   } = inputs;
   const axios = await authenticate(host, token);
 
   const sbomFile = getSbomFile(sbomFilePath);
+  const id = getRepoId(githubToken);
   const serviceName = name || getGitHubRepoName();
   const serviceDescription =
     description ||
@@ -15942,10 +16043,7 @@ async function main(dryRun, inputs) {
   const _sourceInstance = sourceInstance || getGitHubOrgName();
   const _data = data && typeof data === "string" ? data : "{}";
 
-  const id = `${sourceType}-${_sourceInstance}-${serviceName}`;
-  core.info(
-    `Auto-generated service Id [ {source-type}-{source-instance}-{service-name} ]: ${id}`
-  );
+  core.info(`Auto-generated service Id: ${id}`);
 
   const withOverrideDefaults = {
     ...inputs,
@@ -15960,13 +16058,7 @@ async function main(dryRun, inputs) {
     core.info("Valid!");
     console.log(withOverrideDefaults);
   } else {
-    await registerService(
-      axios,
-      {
-        ...withOverrideDefaults,
-      },
-      sbomFile
-    );
+    await registerService(axios, withOverrideDefaults, sbomFile);
   }
 }
 
