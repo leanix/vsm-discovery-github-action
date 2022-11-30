@@ -11851,17 +11851,24 @@ const axios = __nccwpck_require__(2153);
 const jwt_decode = __nccwpck_require__(7527);
 
 function getVsmUrl(decoded) {
-  const iss = decoded.iss
-  console.log("iss: ",iss)
-  console.log("token",decoded)
+  const iss = decoded.iss;
   switch (iss) {
-    case "https://eu-svc.leanix.net": return "eu-vsm.leanix.net"
-    case "https://us-svc.leanix.net": return "us-vsm.leanix.net"
-    case "https://ca-svc.leanix.net": return "ca-vsm.leanix.net"
-    case "https://au-svc.leanix.net": return "au-vsm.leanix.net"
-    case "https://de-svc.leanix.net": return "de-vsm.leanix.net"
-    case "https://ch-svc.leanix.net": return "ch-vsm.leanix.net"
-    default: return new Error("Unable to register service. Error: Unable to identify the VSM host")
+    case "https://eu-svc.leanix.net":
+      return "eu-vsm.leanix.net";
+    case "https://us-svc.leanix.net":
+      return "us-vsm.leanix.net";
+    case "https://ca-svc.leanix.net":
+      return "ca-vsm.leanix.net";
+    case "https://au-svc.leanix.net":
+      return "au-vsm.leanix.net";
+    case "https://de-svc.leanix.net":
+      return "de-vsm.leanix.net";
+    case "https://ch-svc.leanix.net":
+      return "ch-vsm.leanix.net";
+    default:
+      return new Error(
+        "Unable to register service. Error: Unable to identify the VSM host"
+      );
   }
 }
 
@@ -11886,7 +11893,7 @@ async function authenticate(host, token) {
 
     const bearerToken = res.data.access_token;
 
-    const vsmHost = getVsmUrl(jwt_decode(bearerToken))
+    const vsmHost = getVsmUrl(jwt_decode(bearerToken));
 
     return axios.create({
       baseURL: `https://${vsmHost}/services/vsm/discovery/v1`,
@@ -11917,7 +11924,13 @@ const fs = __nccwpck_require__(7147);
 const core = __nccwpck_require__(6257);
 
 function validateInputs(inputs) {
-  const { token, data, sbomFilePath } = inputs;
+  const { token, data, sbomFilePath, host } = inputs;
+
+  if (host && host.startsWith("http")) {
+    throw new Error(
+      "Please enter vsm workspace base url without any suffix. Invalid host input"
+    );
+  }
 
   if (!token) {
     throw new Error(
@@ -15918,37 +15931,41 @@ const fs = __nccwpck_require__(7147);
 const { authenticate } = __nccwpck_require__(6225);
 const { registerService } = __nccwpck_require__(238);
 const { validateInputs } = __nccwpck_require__(8322);
-const {
-  getGitHubOrgName,
-  getGitHubRepoName,
-} = __nccwpck_require__(7408);
+const { getGitHubOrgName, getGitHubRepoName } = __nccwpck_require__(7408);
 
-// start
-let dryRun = core.getInput("dry-run");
-dryRun = !(dryRun === "false");
-const host = core.getInput("host");
-const token = core.getInput("api-token");
-const sbomFilePath = core.getInput("sbom-path");
-const data = core.getInput("additional-data");
-const name = core.getInput("service-name");
-const description = core.getInput("service-description");
-const sourceType = core.getInput("source-type");
-const sourceInstance = core.getInput("source-instance");
+try {
+  // start
+  let dryRun = core.getInput("dry-run");
+  dryRun = !(dryRun === "false");
+  const host = core.getInput("host");
+  const token = core.getInput("api-token");
+  const sbomFilePath = core.getInput("sbom-path");
+  const data = core.getInput("additional-data");
+  const name = core.getInput("service-name");
+  const description = core.getInput("service-description");
+  const sourceType = core.getInput("source-type");
+  const sourceInstance = core.getInput("source-instance");
 
-main(dryRun, {
-  host,
-  token,
-  sbomFilePath,
-  data,
-  name,
-  description,
-  sourceType,
-  sourceInstance,
-})
-  .then()
-  .catch((e) =>
-    core.setFailed(`Failed to register service. Error: ${e.message}`)
+  main(dryRun, {
+    host,
+    token,
+    sbomFilePath,
+    data,
+    name,
+    description,
+    sourceType,
+    sourceInstance,
+  })
+    .then()
+    .catch((e) =>
+      core.setFailed(`Failed to register service. Error: ${e.message}`)
+    );
+} catch (unhandledGlobalError) {
+  core.error(
+    `Caught unhandled error. Error message: ${unhandledGlobalError.message}`
   );
+  process.exit(1);
+}
 
 function getSbomFile(sbomFilePath) {
   const _sbomFilePath = `.${sbomFilePath}`;
@@ -15964,20 +15981,18 @@ function getSbomFile(sbomFilePath) {
   return fs.createReadStream(_sbomFilePath);
 }
 
+function sanitiseHost(rawHost) {
+  return host.trim();
+}
+
 async function main(dryRun, inputs) {
   validateInputs(inputs);
 
-  const {
-    token,
-    host,
-    sbomFilePath,
-    data,
-    name,
-    sourceInstance,
-    description,
-  } = inputs;
-  const axios = await authenticate(host, token);
-  
+  const { token, host, sbomFilePath, data, name, sourceInstance, description } =
+    inputs;
+  const sanitisedHost = sanitiseHost(host);
+  const axios = await authenticate(sanitisedHost, token);
+
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
   const serviceDescription =
@@ -15986,12 +16001,13 @@ async function main(dryRun, inputs) {
   const _sourceInstance = sourceInstance || getGitHubOrgName();
   const _data = data && typeof data === "string" ? data : "{}";
 
-  const id = `${serviceName}`
+  const id = `${serviceName}`;
 
   core.info(`Auto-generated service Id [ {service-name} ]: ${id}`);
 
   const withOverrideDefaults = {
     ...inputs,
+    host: sanitisedHost,
     id,
     name: serviceName,
     sourceInstance: _sourceInstance,

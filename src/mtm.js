@@ -1,18 +1,25 @@
 const axios = require("axios");
-const jwt_decode = require('jwt-decode');
+const jwt_decode = require("jwt-decode");
 
 function getVsmUrl(decoded) {
-  const iss = decoded.iss
-  console.log("iss: ",iss)
-  console.log("token",decoded)
+  const iss = decoded.iss;
   switch (iss) {
-    case "https://eu-svc.leanix.net": return "eu-vsm.leanix.net"
-    case "https://us-svc.leanix.net": return "us-vsm.leanix.net"
-    case "https://ca-svc.leanix.net": return "ca-vsm.leanix.net"
-    case "https://au-svc.leanix.net": return "au-vsm.leanix.net"
-    case "https://de-svc.leanix.net": return "de-vsm.leanix.net"
-    case "https://ch-svc.leanix.net": return "ch-vsm.leanix.net"
-    default: return new Error("Unable to register service. Error: Unable to identify the VSM host")
+    case "https://eu-svc.leanix.net":
+      return "eu-vsm.leanix.net";
+    case "https://us-svc.leanix.net":
+      return "us-vsm.leanix.net";
+    case "https://ca-svc.leanix.net":
+      return "ca-vsm.leanix.net";
+    case "https://au-svc.leanix.net":
+      return "au-vsm.leanix.net";
+    case "https://de-svc.leanix.net":
+      return "de-vsm.leanix.net";
+    case "https://ch-svc.leanix.net":
+      return "ch-vsm.leanix.net";
+    default:
+      return new Error(
+        "Unable to register service. Error: Unable to identify the VSM host"
+      );
   }
 }
 
@@ -37,7 +44,7 @@ async function authenticate(host, token) {
 
     const bearerToken = res.data.access_token;
 
-    const vsmHost = getVsmUrl(jwt_decode(bearerToken))
+    const vsmHost = getVsmUrl(jwt_decode(bearerToken));
 
     return axios.create({
       baseURL: `https://${vsmHost}/services/vsm/discovery/v1`,
