@@ -55,7 +55,7 @@ function getSbomFile(sbomFilePath) {
 }
 
 function sanitiseHost(rawHost) {
-  return host.trim();
+  return rawHost.trim();
 }
 
 async function main(dryRun, inputs) {
