@@ -3,34 +3,42 @@ const fs = require("fs");
 
 const { authenticate } = require("./mtm");
 const { registerService } = require("./discovery-api-client");
+const { validateInputs } = require("./validations");
 const { getGitHubOrgName, getGitHubRepoName } = require("./github-util");
 
-// start
-let dryRun = core.getInput("dry-run");
-dryRun = !(dryRun === "false");
-const host = core.getInput("host");
-const token = core.getInput("api-token");
-const sbomFilePath = core.getInput("sbom-path");
-const data = core.getInput("additional-data");
-const name = core.getInput("service-name");
-const description = core.getInput("service-description");
-const sourceType = core.getInput("source-type");
-const sourceInstance = core.getInput("source-instance");
+try {
+  // start
+  let dryRun = core.getInput("dry-run");
+  dryRun = !(dryRun === "false");
+  const host = core.getInput("host");
+  const token = core.getInput("api-token");
+  const sbomFilePath = core.getInput("sbom-path");
+  const data = core.getInput("additional-data");
+  const name = core.getInput("service-name");
+  const description = core.getInput("service-description");
+  const sourceType = core.getInput("source-type");
+  const sourceInstance = core.getInput("source-instance");
 
-main(dryRun, {
-  host,
-  token,
-  sbomFilePath,
-  data,
-  name,
-  description,
-  sourceType,
-  sourceInstance,
-})
-  .then()
-  .catch((e) =>
-    core.setFailed(`Failed to register service. Error: ${e.message}`)
+  main(dryRun, {
+    host,
+    token,
+    sbomFilePath,
+    data,
+    name,
+    description,
+    sourceType,
+    sourceInstance,
+  })
+    .then()
+    .catch((e) =>
+      core.setFailed(`Failed to register service. Error: ${e.message}`)
+    );
+} catch (unhandledGlobalError) {
+  core.error(
+    `Caught unhandled error. Error message: ${unhandledGlobalError.message}`
   );
+  process.exit(1);
+}
 
 function getSbomFile(sbomFilePath) {
   const _sbomFilePath = `.${sbomFilePath}`;
@@ -46,46 +54,17 @@ function getSbomFile(sbomFilePath) {
   return fs.createReadStream(_sbomFilePath);
 }
 
-function validateInputs(inputs) {
-  const { token, data } = inputs;
-
-  if (!token) {
-    throw new Error(
-      "Could not find api-token in your secrets. Generate the token from the VSM workspace under technical users tab."
-    );
-  }
-
-  if (!sbomFilePath || !fs.existsSync(`.${sbomFilePath}`)) {
-    core.warning(
-      "Could not find SBOM file. Follow the documentation in README.md to learn how to generate SBOM file."
-    );
-  }
-
-  if (data && typeof data === "string") {
-    try {
-      JSON.parse(data);
-    } catch (_) {
-      throw new Error(
-        `additional-data field is not valid json (formatted to string)`
-      );
-    }
-  }
+function sanitiseHost(rawHost) {
+  return host.trim();
 }
 
 async function main(dryRun, inputs) {
   validateInputs(inputs);
 
-  const {
-    token,
-    host,
-    sbomFilePath,
-    sourceType,
-    data,
-    name,
-    sourceInstance,
-    description,
-  } = inputs;
-  const axios = await authenticate(host, token);
+  const { token, host, sbomFilePath, data, name, sourceInstance, description } =
+    inputs;
+  const sanitisedHost = sanitiseHost(host);
+  const axios = await authenticate(sanitisedHost, token);
 
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
@@ -95,13 +74,13 @@ async function main(dryRun, inputs) {
   const _sourceInstance = sourceInstance || getGitHubOrgName();
   const _data = data && typeof data === "string" ? data : "{}";
 
-  const id = `${sourceType}-${_sourceInstance}-${serviceName}`;
-  core.info(
-    `Auto-generated service Id [ {source-type}-{source-instance}-{service-name} ]: ${id}`
-  );
+  const id = `${serviceName}`;
+
+  core.info(`Auto-generated service Id [ {service-name} ]: ${id}`);
 
   const withOverrideDefaults = {
     ...inputs,
+    host: sanitisedHost,
     id,
     name: serviceName,
     sourceInstance: _sourceInstance,
@@ -113,12 +92,6 @@ async function main(dryRun, inputs) {
     core.info("Valid!");
     console.log(withOverrideDefaults);
   } else {
-    await registerService(
-      axios,
-      {
-        ...withOverrideDefaults,
-      },
-      sbomFile
-    );
+    await registerService(axios, withOverrideDefaults, sbomFile);
   }
 }
