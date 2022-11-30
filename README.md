@@ -10,7 +10,7 @@ Generate and store LeanIX technical user token in GitHub repository secrets (LXV
         uses: actions/checkout@v3
 
       - name: VSM discovery
-        uses: leanix/vsm-discovery-github-action@main
+        uses: leanix/vsm-discovery-github-action@v1.0.0
         with:
           api-token: ${{ secrets.LXVSM_TECHNICAL_USER_TOKEN }}
 ```
@@ -21,6 +21,8 @@ Generate and store LeanIX technical user token in GitHub repository secrets (LXV
 **Required** The LeanIX host base url of your workspace, e.g.: leanix.leanix.net
 
 **Default:** `eu.leanix.net`
+
+![Screenshot 2022-11-30 at 12 12 08 PM](https://user-images.githubusercontent.com/64901333/204726299-1d41de31-5cce-43cd-a684-314e77a4dcf0.png)
 
 #### `api-token`
 **Required** technical user token for VSM workspace
