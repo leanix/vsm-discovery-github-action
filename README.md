@@ -61,6 +61,15 @@ The location of the SBOM file that is generated in CycloneDX specification. Acce
 #### `additional-data`
 A key-value object holding any additional metadata about the service you want to bring into VSM.
 
+**example:** 
+```json
+  {
+    "number_of_incidents":"2",
+    "tech_stack":"Python",
+    "usage":"internal"
+  }
+```
+
 #### `dry-run`
 Validates the inputs without actually submitting the data to VSM
 
