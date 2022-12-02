@@ -61,6 +61,15 @@ The location of the SBOM file that is generated in CycloneDX specification. Acce
 #### `additional-data`
 A key-value object holding any additional metadata about the service you want to bring into VSM.
 
+**example:** 
+```json
+  {
+    "number_of_incidents":"2",
+    "tech_stack":"Python",
+    "usage":"internal"
+  }
+```
+
 #### `dry-run`
 Validates the inputs without actually submitting the data to VSM
 
@@ -108,7 +117,7 @@ jobs:
 
            # Invoke the GitHub action to register the service with SBOM
            - name: VSM discovery
-             uses: leanix/vsm-discovery-github-action@main
+             uses: leanix/vsm-discovery-github-action@v1.0.0
              with:
                 api-token: ${{ secrets.VSM_LEANIX_API_TOKEN }}
               # dry-run: true
@@ -144,8 +153,8 @@ jobs:
         
         # Invoke the GitHub action to register the service with SBOM
         - name: VSM discovery
-          uses: leanix/vsm-discovery-github-action@main
+          uses: leanix/vsm-discovery-github-action@v1.0.0
           with:
-            api-token: ${{ env.VSM_LEANIX_API_TOKEN }}
+            api-token: ${{ secrets.VSM_LEANIX_API_TOKEN }}
           # dry-run: true
 ```
