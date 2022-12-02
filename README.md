@@ -108,7 +108,7 @@ jobs:
 
            # Invoke the GitHub action to register the service with SBOM
            - name: VSM discovery
-             uses: leanix/vsm-discovery-github-action@main
+             uses: leanix/vsm-discovery-github-action@v1
              with:
                 api-token: ${{ secrets.VSM_LEANIX_API_TOKEN }}
               # dry-run: true
@@ -144,8 +144,8 @@ jobs:
         
         # Invoke the GitHub action to register the service with SBOM
         - name: VSM discovery
-          uses: leanix/vsm-discovery-github-action@main
+          uses: leanix/vsm-discovery-github-action@v1
           with:
-            api-token: ${{ env.VSM_LEANIX_API_TOKEN }}
+            api-token: ${{ secrets.VSM_LEANIX_API_TOKEN }}
           # dry-run: true
 ```
