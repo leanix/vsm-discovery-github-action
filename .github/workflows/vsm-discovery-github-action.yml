@@ -1,0 +1,44 @@
+name: Generate and register service
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  post-deploy:
+    name: Post Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: Get credentials
+        uses: leanix/secrets-action@master
+        with:
+          secret-store-credentials: ${{ secrets.INJECTED_SECRET_STORE_CREDENTIALS }}
+
+      - name: 'Resolve Project Dependencies Using Npm'
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          npm install
+          npm run build --if-present
+          npm run test --if-present
+          popd
+
+      - name: Setup Node ${{ env.NODE_VERSION }} Environment
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Generate SBOM
+        run:  |
+          npm install --global @cyclonedx/cyclonedx-npm
+          cyclonedx-npm --output-file "bom.json"
+
+      - name: VSM discovery
+        uses: leanix/vsm-discovery-github-action@main
+        with:
+          api-token: ${{ secrets.LXVSM_TECHNICAL_USER_TOKEN }}
