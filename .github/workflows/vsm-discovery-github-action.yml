@@ -33,4 +33,4 @@ jobs:
       - name: VSM discovery
         uses: leanix/vsm-discovery-github-action@main
         with:
-          api-token: ${{ secrets.VSM_LEANIX_API_TOKEN }}
+          api-token: ${{ secrets.LXVSM_TECHNICAL_USER_TOKEN }}
