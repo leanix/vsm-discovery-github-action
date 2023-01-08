@@ -11938,7 +11938,7 @@ function validateInputs(inputs) {
     );
   }
 
-  if (!sbomFilePath || !fs.existsSync(`.${sbomFilePath}`)) {
+  if (!sbomFilePath || !fs.existsSync(`${sbomFilePath}`)) {
     core.warning(
       "Could not find SBOM file. Follow the documentation in README.md to learn how to generate SBOM file."
     );
