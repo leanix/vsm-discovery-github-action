@@ -15968,7 +15968,7 @@ try {
 }
 
 function getSbomFile(sbomFilePath) {
-  const _sbomFilePath = `.${sbomFilePath}`;
+  const _sbomFilePath = `${sbomFilePath}`;
   try {
     // validate if the file is a valid sbom json file
     let file = fs.readFileSync(_sbomFilePath, "utf-8");
