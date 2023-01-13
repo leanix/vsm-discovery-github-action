@@ -101,7 +101,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
           - name: Checkout
-             uses: actions/checkout@v3
+            uses: actions/checkout@v3
 
           - name: Set up JDK temurin 17
             uses: actions/setup-java@v3
@@ -116,10 +116,10 @@ jobs:
               arguments: cyclonedxBom
 
            # Invoke the GitHub action to register the service with SBOM
-           - name: VSM discovery
-             uses: leanix/vsm-discovery-github-action@v1.0.0
-             with:
-                api-token: ${{ secrets.VSM_LEANIX_API_TOKEN }}
+          - name: VSM discovery
+            uses: leanix/vsm-discovery-github-action@v1.0.0
+            with:
+              api-token: ${{ secrets.VSM_LEANIX_API_TOKEN }}
               # dry-run: true
 ```
 
@@ -141,15 +141,15 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Setup Node ${{ env.NODE_VERSION }} Environment
-            uses: actions/setup-node@v1
-            with:
+          uses: actions/setup-node@v1
+          with:
               node-version: ${{ env.NODE_VERSION }}
         
         # Use the respective command to generate SBOM file
         - name: Generate SBOM
-            run:  |
-                npm install --global @cyclonedx/cyclonedx-npm
-                cyclonedx-npm --output-file "bom.json"
+          run:  |
+              npm install --global @cyclonedx/cyclonedx-npm
+              cyclonedx-npm --output-file "bom.json"
         
         # Invoke the GitHub action to register the service with SBOM
         - name: VSM discovery
