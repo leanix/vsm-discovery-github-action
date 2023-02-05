@@ -25,7 +25,7 @@ Generate and store LeanIX technical user token in GitHub repository secrets (LXV
 ![Screenshot 2022-11-30 at 12 12 08 PM](https://user-images.githubusercontent.com/64901333/204726299-1d41de31-5cce-43cd-a684-314e77a4dcf0.png)
 
 #### `api-token`
-**Required** technical user token for VSM workspace
+**Required** technical user token for VSM workspace **Note:** the token needs admin access
 
 #### `service-name`
 Name of the service. By default name of the repository is assumed.
@@ -45,7 +45,7 @@ The source system of the service e.g. CI/CD
 **Recommendation:** Use the default so that all the services in the same organisation are grouped under the same source in VSM. Only override if you know what you are doing!
 
 #### `source-instance`
-The individual instance within the source system. By default GitHub organisation same is picked.
+The individual instance within the source system. By default GitHub organisation name is picked.
 
 **Default:** Organisation name, example: leanix
 
