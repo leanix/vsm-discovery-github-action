@@ -72,7 +72,7 @@ async function main(dryRun, inputs) {
 
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
-  core.info("About to get repo ID")
+  core.info("About to get repo ID");
   const repoId = await getGitHubRepoId();
   const serviceDescription =
     description ||
