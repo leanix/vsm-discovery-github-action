@@ -3,7 +3,7 @@ name: Generate and register service
 on:
   push:
     branches:
-      - feature/CID-1587/add-sourceId-header
+      - main
   workflow_dispatch:
 
 jobs:

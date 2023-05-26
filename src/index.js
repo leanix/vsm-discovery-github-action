@@ -73,7 +73,7 @@ async function main(dryRun, inputs) {
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
   core.info("About to get repo ID");
-  const repoId = await getGitHubRepoId();
+  const repoId = getGitHubRepoId();
   const serviceDescription =
     description ||
     `This service has been brought in by the GitHub action (${getGitHubRepoName()})`;
@@ -97,7 +97,7 @@ async function main(dryRun, inputs) {
 
   if (dryRun) {
     core.info("Valid!");
-    core.info(withOverrideDefaults);
+    console.log(withOverrideDefaults);
   } else {
     await registerService(axios, withOverrideDefaults, sbomFile);
   }
