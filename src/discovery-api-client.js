@@ -2,15 +2,16 @@ const FormData = require("form-data");
 
 function registerService(
   axios,
-  { id, sourceType, sourceInstance, name, description, data },
+  { id, repoId, sourceType, sourceInstance, name, description, data },
   sbomFile
 ) {
   console.log(
-    `Registering service and SBOM with following details. id: ${id}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`
+    `Registering service and SBOM with following details. id: ${id}, repoId: ${repoId}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`
   );
 
   const formData = new FormData();
   formData.append("id", id);
+  formData.append("repoId", repoId);
   formData.append("sourceType", sourceType);
   formData.append("sourceInstance", sourceInstance);
   formData.append("name", name);

@@ -11800,15 +11800,16 @@ const FormData = __nccwpck_require__(5580);
 
 function registerService(
   axios,
-  { id, sourceType, sourceInstance, name, description, data },
+  { id, repoId, sourceType, sourceInstance, name, description, data },
   sbomFile
 ) {
   console.log(
-    `Registering service and SBOM with following details. id: ${id}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`
+    `Registering service and SBOM with following details. id: ${id}, repoId: ${repoId}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`
   );
 
   const formData = new FormData();
   formData.append("id", id);
+  formData.append("repoId", repoId);
   formData.append("sourceType", sourceType);
   formData.append("sourceInstance", sourceInstance);
   formData.append("name", name);
@@ -11839,7 +11840,11 @@ function getGitHubOrgName() {
   return github.context.repo.owner;
 }
 
-module.exports = { getGitHubOrgName, getGitHubRepoName };
+function getGitHubRepoId() {
+  return github.context.repo.id;
+}
+
+module.exports = { getGitHubOrgName, getGitHubRepoName, getGitHubRepoId };
 
 
 /***/ }),
@@ -15931,7 +15936,11 @@ const fs = __nccwpck_require__(7147);
 const { authenticate } = __nccwpck_require__(6225);
 const { registerService } = __nccwpck_require__(238);
 const { validateInputs } = __nccwpck_require__(8322);
-const { getGitHubOrgName, getGitHubRepoName } = __nccwpck_require__(7408);
+const {
+  getGitHubOrgName,
+  getGitHubRepoName,
+  getGitHubRepoId,
+} = __nccwpck_require__(7408);
 
 try {
   // start
@@ -15995,6 +16004,7 @@ async function main(dryRun, inputs) {
 
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
+  const repoId = getGitHubRepoId();
   const serviceDescription =
     description ||
     `This service has been brought in by the GitHub action (${getGitHubRepoName()})`;
@@ -16009,6 +16019,7 @@ async function main(dryRun, inputs) {
     ...inputs,
     host: sanitisedHost,
     id,
+    repoId,
     name: serviceName,
     sourceInstance: _sourceInstance,
     description: serviceDescription,
