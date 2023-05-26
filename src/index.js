@@ -93,7 +93,7 @@ async function main(dryRun, inputs) {
     sourceInstance: _sourceInstance,
     description: serviceDescription,
     data: _data,
-  };x
+  };
 
   if (dryRun) {
     core.info("Valid!");
