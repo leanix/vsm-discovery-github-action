@@ -10,11 +10,13 @@ function getGitHubOrgName() {
 
 async function getGitHubRepoId() {
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+  const owner = github.context.repo.owner
+  const repoName = github.context.repo.repo
 
   const response = await octokit.graphql(
     `
     {
-      repository(owner:"${github.context.repo.owner}", name:"${github.context.repo.repo}") {
+      repository(owner:"${owner}", name:"${repoName}") {
         id
       }
     }
@@ -23,7 +25,7 @@ async function getGitHubRepoId() {
 
   console.log("Response: " + response);
 
-  return response.data.repository.id;
+  return response.repository.id;
 }
 
 module.exports = { getGitHubOrgName, getGitHubRepoName, getGitHubRepoId };
