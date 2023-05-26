@@ -34,4 +34,3 @@ jobs:
         uses: leanix/vsm-discovery-github-action@main
         with:
           api-token: ${{ env.VSM_LEANIX_API_TOKEN }}
-          repo-id: ${{ github.repository_id }}

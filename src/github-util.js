@@ -8,4 +8,20 @@ function getGitHubOrgName() {
   return github.context.repo.owner;
 }
 
-module.exports = { getGitHubOrgName, getGitHubRepoName };
+async function getGitHubRepoId() {
+  const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+
+  const { response } = await octokit.graphql(
+    `
+    {
+      repository(owner:${github.context.repo.owner}, name:${github.context.repo.repo}) {
+        id
+      }
+    }
+    `
+  );
+
+  return response.id;
+}
+
+module.exports = { getGitHubOrgName, getGitHubRepoName, getGitHubRepoId };
