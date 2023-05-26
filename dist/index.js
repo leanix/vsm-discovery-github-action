@@ -15936,7 +15936,11 @@ const fs = __nccwpck_require__(7147);
 const { authenticate } = __nccwpck_require__(6225);
 const { registerService } = __nccwpck_require__(238);
 const { validateInputs } = __nccwpck_require__(8322);
-const { getGitHubOrgName, getGitHubRepoName, getGitHubRepoId} = __nccwpck_require__(7408);
+const {
+  getGitHubOrgName,
+  getGitHubRepoName,
+  getGitHubRepoId,
+} = __nccwpck_require__(7408);
 
 try {
   // start
