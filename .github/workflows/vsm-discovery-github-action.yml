@@ -31,6 +31,7 @@ jobs:
           cyclonedx-npm --output-file "bom.json"
 
       - name: VSM discovery
-        uses: leanix/vsm-discovery-github-action@feature/CID-1587/add-sourceId-header
+        uses: leanix/vsm-discovery-github-action@main
         with:
           api-token: ${{ env.VSM_LEANIX_API_TOKEN }}
+          repo-id: ${{ github.repository_id }}
