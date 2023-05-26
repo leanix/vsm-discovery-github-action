@@ -14,7 +14,7 @@ async function getGitHubRepoId() {
   const response = await octokit.graphql(
     `
     {
-      repository(owner:${github.context.repo.owner}, name:${github.context.repo.repo}) {
+      repository(owner:"${github.context.repo.owner}", name:"${github.context.repo.repo}") {
         id
       }
     }
