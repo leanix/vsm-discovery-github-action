@@ -1,11 +1,12 @@
 const FormData = require("form-data");
+const core = require("@actions/core");
 
 function registerService(
   axios,
   { id, repoId, sourceType, sourceInstance, name, description, data },
   sbomFile
 ) {
-  console.log(
+  core.info(
     `Registering service and SBOM with following details. id: ${id}, repoId: ${repoId}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`
   );
 

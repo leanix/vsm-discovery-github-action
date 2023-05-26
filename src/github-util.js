@@ -1,4 +1,5 @@
 const github = require("@actions/github");
+const core = require("@actions/core");
 
 function getGitHubRepoName() {
   return github.context.repo.repo;
@@ -9,9 +10,9 @@ function getGitHubOrgName() {
 }
 
 async function getGitHubRepoId() {
-  console.log("##############################")
+  core.info("##############################")
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-  console.log("token: " + process.env.GITHUB_TOKEN);
+  core.info("token: " + process.env.GITHUB_TOKEN);
 
   const query = `
     {
@@ -20,11 +21,11 @@ async function getGitHubRepoId() {
       }
     }
     `;
-  console.log("Query: " + query);
+  core.info("Query: " + query);
 
   const response = await octokit.graphql();
 
-  console.log("Response: " + response);
+  core.info("Response: " + response);
 
   return response.repository.id;
 }
