@@ -4,11 +4,7 @@ const fs = require("fs");
 const { authenticate } = require("./mtm");
 const { registerService } = require("./discovery-api-client");
 const { validateInputs } = require("./validations");
-const {
-  getGitHubOrgName,
-  getGitHubRepoName,
-  getGitHubRepoId,
-} = require("./github-util");
+const { getGitHubOrgName, getGitHubRepoName } = require("./github-util");
 
 try {
   // start
@@ -19,6 +15,7 @@ try {
   const sbomFilePath = core.getInput("sbom-path");
   const data = core.getInput("additional-data");
   const name = core.getInput("service-name");
+  const repoId = core.getInput("repo-id");
   const description = core.getInput("service-description");
   const sourceType = core.getInput("source-type");
   const sourceInstance = core.getInput("source-instance");
@@ -29,6 +26,7 @@ try {
     sbomFilePath,
     data,
     name,
+    repoId,
     description,
     sourceType,
     sourceInstance,
@@ -72,7 +70,6 @@ async function main(dryRun, inputs) {
 
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
-  const repoId = getGitHubRepoId();
   const serviceDescription =
     description ||
     `This service has been brought in by the GitHub action (${getGitHubRepoName()})`;
@@ -87,7 +84,6 @@ async function main(dryRun, inputs) {
     ...inputs,
     host: sanitisedHost,
     id,
-    repoId,
     name: serviceName,
     sourceInstance: _sourceInstance,
     description: serviceDescription,
