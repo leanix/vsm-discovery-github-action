@@ -8,4 +8,8 @@ function getGitHubOrgName() {
   return github.context.repo.owner;
 }
 
-module.exports = { getGitHubOrgName, getGitHubRepoName };
+function getGitHubRepoId() {
+  return github.context.repo.id;
+}
+
+module.exports = { getGitHubOrgName, getGitHubRepoName, getGitHubRepoId };

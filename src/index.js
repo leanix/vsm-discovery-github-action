@@ -4,7 +4,7 @@ const fs = require("fs");
 const { authenticate } = require("./mtm");
 const { registerService } = require("./discovery-api-client");
 const { validateInputs } = require("./validations");
-const { getGitHubOrgName, getGitHubRepoName } = require("./github-util");
+const { getGitHubOrgName, getGitHubRepoName, getGitHubRepoId} = require("./github-util");
 
 try {
   // start
@@ -68,6 +68,7 @@ async function main(dryRun, inputs) {
 
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
+  const repoId = getGitHubRepoId();
   const serviceDescription =
     description ||
     `This service has been brought in by the GitHub action (${getGitHubRepoName()})`;
@@ -82,6 +83,7 @@ async function main(dryRun, inputs) {
     ...inputs,
     host: sanitisedHost,
     id,
+    repoId,
     name: serviceName,
     sourceInstance: _sourceInstance,
     description: serviceDescription,
