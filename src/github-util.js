@@ -10,24 +10,24 @@ function getGitHubOrgName() {
 }
 
 async function getGitHubRepoId() {
-  // core.info("##############################")
-  // const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-  // core.info("token: " + process.env.GITHUB_TOKEN);
-  //
-  // const query = `
-  //   {
-  //     repository(owner:"${github.context.repo.owner}", name:"${github.context.repo.repo}") {
-  //       id
-  //     }
-  //   }
-  //   `;
-  // core.info("Query: " + query);
-  //
-  // const response = await octokit.graphql();
-  //
-  // core.info("Response: " + response);
+  core.info("##############################")
+  const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+  core.info("token: " + process.env.GITHUB_TOKEN);
 
-  return "response.repository.id;";
+  const query = `
+    {
+      repository(owner:"${github.context.repo.owner}", name:"${github.context.repo.repo}") {
+        id
+      }
+    }
+    `;
+  core.info("Query: " + query);
+
+  const response = await octokit.graphql();
+
+  core.info("Response: " + response);
+
+  return response.repository.id;
 }
 
 module.exports = { getGitHubOrgName, getGitHubRepoName, getGitHubRepoId };
