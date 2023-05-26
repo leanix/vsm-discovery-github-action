@@ -18,8 +18,10 @@ async function getGitHubRepoId() {
       }
     }
     `;
+  console.log("Query: " + query);
+  console.log("token: " + process.env.GITHUB_TOKEN);
 
-  const response = await octokit.graphql(query);
+  const response = await octokit.graphql();
 
   console.log("Response: " + response);
 
