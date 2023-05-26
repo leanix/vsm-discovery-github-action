@@ -72,6 +72,7 @@ async function main(dryRun, inputs) {
 
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
+  console.log("About to get repo ID")
   const repoId = await getGitHubRepoId();
   const serviceDescription =
     description ||
@@ -92,7 +93,7 @@ async function main(dryRun, inputs) {
     sourceInstance: _sourceInstance,
     description: serviceDescription,
     data: _data,
-  };
+  };x
 
   if (dryRun) {
     core.info("Valid!");

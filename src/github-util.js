@@ -9,7 +9,9 @@ function getGitHubOrgName() {
 }
 
 async function getGitHubRepoId() {
+  console.log("##############################")
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+  console.log("token: " + process.env.GITHUB_TOKEN);
 
   const query = `
     {
@@ -19,7 +21,6 @@ async function getGitHubRepoId() {
     }
     `;
   console.log("Query: " + query);
-  console.log("token: " + process.env.GITHUB_TOKEN);
 
   const response = await octokit.graphql();
 
