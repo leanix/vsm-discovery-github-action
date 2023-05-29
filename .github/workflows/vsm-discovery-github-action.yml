@@ -3,7 +3,7 @@ name: Generate and register service
 on:
   push:
     branches:
-      - feature/CID-1587/add-sourceId-header
+      - main
   workflow_dispatch:
 
 jobs:
@@ -31,6 +31,6 @@ jobs:
           cyclonedx-npm --output-file "bom.json"
 
       - name: VSM discovery
-        uses: leanix/vsm-discovery-github-action@feature/CID-1587/add-sourceId-header
+        uses: leanix/vsm-discovery-github-action@main
         with:
           api-token: ${{ env.VSM_LEANIX_API_TOKEN }}

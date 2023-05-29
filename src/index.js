@@ -4,7 +4,11 @@ const fs = require("fs");
 const { authenticate } = require("./mtm");
 const { registerService } = require("./discovery-api-client");
 const { validateInputs } = require("./validations");
-const { getGitHubOrgName, getGitHubRepoName, getGitHubRepoId} = require("./github-util");
+const {
+  getGitHubOrgName,
+  getGitHubRepoName,
+  getGitHubRepoId,
+} = require("./github-util");
 
 try {
   // start
@@ -59,8 +63,6 @@ function sanitiseHost(rawHost) {
 }
 
 async function main(dryRun, inputs) {
-
-  console.log("############");
   validateInputs(inputs);
 
   const { token, host, sbomFilePath, data, name, sourceInstance, description } =

@@ -11841,23 +11841,15 @@ function getGitHubOrgName() {
 }
 
 async function getGitHubRepoId() {
-  console.log("##############################")
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-  console.log("token: " + process.env.GITHUB_TOKEN);
 
-  const query = `
+  const response = await octokit.graphql(`
     {
       repository(owner:"${github.context.repo.owner}", name:"${github.context.repo.repo}") {
         id
       }
     }
-    `;
-  console.log("Query: " + query);
-
-  const response = await octokit.graphql(query);
-
-  console.log("Response: " + response);
-  console.log("repoId : " + response.repository.id);
+    `);
 
   return response.repository.id;
 }
@@ -16009,8 +16001,6 @@ function sanitiseHost(rawHost) {
 }
 
 async function main(dryRun, inputs) {
-
-  console.log("############");
   validateInputs(inputs);
 
   const { token, host, sbomFilePath, data, name, sourceInstance, description } =
