@@ -11840,23 +11840,7 @@ function getGitHubOrgName() {
   return github.context.repo.owner;
 }
 
-async function getGitHubRepoId() {
-  const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-
-  const { response } = await octokit.graphql(
-    `
-    {
-      repository(owner:${github.context.repo.owner}, name:${github.context.repo.repo}) {
-        id
-      }
-    }
-    `
-  );
-
-  return response.id;
-}
-
-module.exports = { getGitHubOrgName, getGitHubRepoName, getGitHubRepoId };
+module.exports = { getGitHubOrgName, getGitHubRepoName };
 
 
 /***/ }),
@@ -15948,11 +15932,7 @@ const fs = __nccwpck_require__(7147);
 const { authenticate } = __nccwpck_require__(6225);
 const { registerService } = __nccwpck_require__(238);
 const { validateInputs } = __nccwpck_require__(8322);
-const {
-  getGitHubOrgName,
-  getGitHubRepoName,
-  getGitHubRepoId,
-} = __nccwpck_require__(7408);
+const { getGitHubOrgName, getGitHubRepoName } = __nccwpck_require__(7408);
 
 try {
   // start
@@ -15963,6 +15943,7 @@ try {
   const sbomFilePath = core.getInput("sbom-path");
   const data = core.getInput("additional-data");
   const name = core.getInput("service-name");
+  const repoId = core.getInput("repo-id");
   const description = core.getInput("service-description");
   const sourceType = core.getInput("source-type");
   const sourceInstance = core.getInput("source-instance");
@@ -15973,6 +15954,7 @@ try {
     sbomFilePath,
     data,
     name,
+    repoId,
     description,
     sourceType,
     sourceInstance,
@@ -16016,7 +15998,6 @@ async function main(dryRun, inputs) {
 
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
-  const repoId = await getGitHubRepoId();
   const serviceDescription =
     description ||
     `This service has been brought in by the GitHub action (${getGitHubRepoName()})`;
@@ -16031,7 +16012,6 @@ async function main(dryRun, inputs) {
     ...inputs,
     host: sanitisedHost,
     id,
-    repoId,
     name: serviceName,
     sourceInstance: _sourceInstance,
     description: serviceDescription,
