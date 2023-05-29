@@ -11800,16 +11800,16 @@ const FormData = __nccwpck_require__(9835);
 
 function registerService(
   axios,
-  { id, repoId, sourceType, sourceInstance, name, description, data },
+  { id, sourceType, sourceInstance, name, description, data },
   sbomFile
 ) {
   console.log(
-    `Registering service and SBOM with following details. id: ${id}, repoId: ${repoId}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`
+    `Registering service and SBOM with following details. id: ${id}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`
   );
 
   const formData = new FormData();
   formData.append("id", id);
-  formData.append("repoId", repoId);
+  formData.append("repoId", "repoId");
   formData.append("sourceType", sourceType);
   formData.append("sourceInstance", sourceInstance);
   formData.append("name", name);
@@ -15943,7 +15943,6 @@ try {
   const sbomFilePath = core.getInput("sbom-path");
   const data = core.getInput("additional-data");
   const name = core.getInput("service-name");
-  const repoId = core.getInput("repo-id");
   const description = core.getInput("service-description");
   const sourceType = core.getInput("source-type");
   const sourceInstance = core.getInput("source-instance");
@@ -15954,7 +15953,6 @@ try {
     sbomFilePath,
     data,
     name,
-    repoId,
     description,
     sourceType,
     sourceInstance,

@@ -15,7 +15,6 @@ try {
   const sbomFilePath = core.getInput("sbom-path");
   const data = core.getInput("additional-data");
   const name = core.getInput("service-name");
-  const repoId = core.getInput("repo-id");
   const description = core.getInput("service-description");
   const sourceType = core.getInput("source-type");
   const sourceInstance = core.getInput("source-instance");
@@ -26,7 +25,6 @@ try {
     sbomFilePath,
     data,
     name,
-    repoId,
     description,
     sourceType,
     sourceInstance,
