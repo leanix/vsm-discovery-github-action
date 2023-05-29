@@ -11800,16 +11800,16 @@ const FormData = __nccwpck_require__(9835);
 
 function registerService(
   axios,
-  { id, sourceType, sourceInstance, name, description, data },
+  { id, repoId, sourceType, sourceInstance, name, description, data },
   sbomFile
 ) {
   console.log(
-    `Registering service and SBOM with following details. id: ${id}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`
+    `Registering service and SBOM with following details. id: ${id}, repoId: ${repoId}, sourceType: ${sourceType}, sourceInstance: ${sourceInstance}, name: ${name}, description: ${description}`
   );
 
   const formData = new FormData();
   formData.append("id", id);
-  formData.append("repoId", "repoId");
+  formData.append("repoId", repoId);
   formData.append("sourceType", sourceType);
   formData.append("sourceInstance", sourceInstance);
   formData.append("name", name);
@@ -11840,7 +11840,29 @@ function getGitHubOrgName() {
   return github.context.repo.owner;
 }
 
-module.exports = { getGitHubOrgName, getGitHubRepoName };
+async function getGitHubRepoId() {
+  console.log("##############################")
+  const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+  console.log("token: " + process.env.GITHUB_TOKEN);
+
+  const query = `
+    {
+      repository(owner:"${github.context.repo.owner}", name:"${github.context.repo.repo}") {
+        id
+      }
+    }
+    `;
+  console.log("Query: " + query);
+
+  const response = await octokit.graphql(query);
+
+  console.log("Response: " + response);
+  console.log("repoId : " + response.repository.id);
+
+  return response.repository.id;
+}
+
+module.exports = { getGitHubOrgName, getGitHubRepoName, getGitHubRepoId };
 
 
 /***/ }),
@@ -15932,7 +15954,7 @@ const fs = __nccwpck_require__(7147);
 const { authenticate } = __nccwpck_require__(9399);
 const { registerService } = __nccwpck_require__(9419);
 const { validateInputs } = __nccwpck_require__(1678);
-const { getGitHubOrgName, getGitHubRepoName } = __nccwpck_require__(4411);
+const { getGitHubOrgName, getGitHubRepoName, getGitHubRepoId} = __nccwpck_require__(4411);
 
 try {
   // start
@@ -15998,6 +16020,7 @@ async function main(dryRun, inputs) {
 
   const sbomFile = getSbomFile(sbomFilePath);
   const serviceName = name || getGitHubRepoName();
+  const repoId = await getGitHubRepoId();
   const serviceDescription =
     description ||
     `This service has been brought in by the GitHub action (${getGitHubRepoName()})`;
@@ -16012,6 +16035,7 @@ async function main(dryRun, inputs) {
     ...inputs,
     host: sanitisedHost,
     id,
+    repoId,
     name: serviceName,
     sourceInstance: _sourceInstance,
     description: serviceDescription,
