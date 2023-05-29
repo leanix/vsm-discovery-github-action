@@ -61,6 +61,8 @@ function sanitiseHost(rawHost) {
 }
 
 async function main(dryRun, inputs) {
+  core.info(`Auto-generated service Id [ {service-name} ]: ${id}`);
+  console.log("############");
   validateInputs(inputs);
 
   const { token, host, sbomFilePath, data, name, sourceInstance, description } =
