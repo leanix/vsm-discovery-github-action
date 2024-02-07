@@ -1,3 +1,5 @@
+[![REUSE status](https://api.reuse.software/badge/github.com/leanix/vsm-discovery-github-action)](https://api.reuse.software/info/github.com/leanix/vsm-discovery-github-action)
+
 ### VSM Discovery GitHub Action
 This action helps to provide a [CycloneDX SBOM](https://cyclonedx.org/specification/overview/) JSON file to [LeanIX VSM](https://docs-vsm.leanix.net/docs/software-bill-of-materials). It can also easily be extended to integrate with the SBOM generation so that generation and provision are automated.
 
